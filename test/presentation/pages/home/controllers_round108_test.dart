@@ -24,8 +24,8 @@ void main() {
   group('controller 文件存在 (R108 拆 + 1.1.0 round 4 摘 dispatcher)', () {
     test('case 1: controllers/ 子目录 2 文件存在 (dispatcher 已摘)', () async {
       final files = [
-        'lib/presentation/pages/home/controllers/home_deep_link_handler.dart',
-        'lib/presentation/pages/home/controllers/home_celebration_controller.dart',
+        'lib/features/home/presentation/pages/home/controllers/home_deep_link_handler.dart',
+        'lib/features/home/presentation/pages/home/controllers/home_celebration_controller.dart',
       ];
       for (final f in files) {
         final exists = await File(f).exists();
@@ -36,7 +36,7 @@ void main() {
         );
       }
       final removed = await File(
-        'lib/presentation/pages/home/controllers/home_care_engine_dispatcher.dart',
+        'lib/features/home/presentation/pages/home/controllers/home_care_engine_dispatcher.dart',
       ).exists();
       expect(
         removed,
@@ -52,10 +52,10 @@ void main() {
 
     setUpAll(() async {
       deepLinkContent = await File(
-        'lib/presentation/pages/home/controllers/home_deep_link_handler.dart',
+        'lib/features/home/presentation/pages/home/controllers/home_deep_link_handler.dart',
       ).readAsString();
       celebrationContent = await File(
-        'lib/presentation/pages/home/controllers/home_celebration_controller.dart',
+        'lib/features/home/presentation/pages/home/controllers/home_celebration_controller.dart',
       ).readAsString();
     });
 
@@ -120,7 +120,7 @@ void main() {
 
     setUpAll(() async {
       homePageStateContent = await File(
-        'lib/presentation/pages/home/home_page_state.dart',
+        'lib/features/home/presentation/pages/home/home_page_state.dart',
       ).readAsString();
       lineCount = homePageStateContent.split('\n').length;
     });
@@ -198,7 +198,7 @@ void main() {
 
     setUpAll(() async {
       homePageStateContent = await File(
-        'lib/presentation/pages/home/home_page_state.dart',
+        'lib/features/home/presentation/pages/home/home_page_state.dart',
       ).readAsString();
     });
 

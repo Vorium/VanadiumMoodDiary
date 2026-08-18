@@ -27,17 +27,17 @@ import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   group('R122 P2-2 — legal_page 拆 4 widget + 1 enum', () {
-    const mainPath = 'lib/presentation/pages/settings/legal_page.dart';
+    const mainPath = 'lib/features/settings/presentation/pages/settings/legal_page.dart';
     const sectionTitlePath =
-        'lib/presentation/pages/settings/widgets/legal_section_title.dart';
+        'lib/features/settings/presentation/pages/settings/widgets/legal_section_title.dart';
     const docTilePath =
-        'lib/presentation/pages/settings/widgets/legal_doc_tile.dart';
+        'lib/features/settings/presentation/pages/settings/widgets/legal_doc_tile.dart';
     const consentTilePath =
-        'lib/presentation/pages/settings/widgets/legal_consent_tile.dart';
+        'lib/features/settings/presentation/pages/settings/widgets/legal_consent_tile.dart';
     const withdrawOptionPath =
-        'lib/presentation/pages/settings/widgets/legal_withdraw_option.dart';
+        'lib/features/settings/presentation/pages/settings/widgets/legal_withdraw_option.dart';
     const withdrawChoicePath =
-        'lib/presentation/pages/settings/widgets/legal_withdraw_choice.dart';
+        'lib/features/settings/presentation/pages/settings/widgets/legal_withdraw_choice.dart';
 
     test('6 文件双存在 (主壳 + 4 widget + 1 enum)', () {
       expect(File(mainPath).existsSync(), isTrue, reason: mainPath);

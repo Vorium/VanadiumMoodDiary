@@ -183,7 +183,7 @@ class DayDetailCalculator {
   /// [checkInLabel] 可选 i18n — 不传 = 中文 fallback (单测用)
   /// [dailyLabel] 可选 i18n — 不传 = '每日打卡'
   /// [tempLabel] 可选 i18n — 不传 = '临时吃药'
-  /// [phq9Name] / [gad7Name] 可选 i18n — 不传 = 'PHQ-9 抑郁筛查' / 'GAD-7 焦虑筛查'
+  /// [phq9Name] / [gad7Name] 可选 i18n — 不传 = 'PHQ-9 情绪自测' / 'GAD-7 情绪自测'
   ///
   /// v0.27 round 77 (R76-N11 修): 之前 `AppLocalizations? l10n` 让 domain
   /// 间接 import Flutter。改用 6 个 closure 注入, domain 0 flutter 完全。
@@ -325,8 +325,8 @@ class DayDetailCalculator {
   /// 渲染打卡事件 title (i18n 化, closure=null 走中文 fallback)
   ///
   /// v0.28 round 65 (spzh P2-H 修复): 抽 helper 统一 5+ 处 '打卡 · ${name}' /
-  /// '每日打卡' / '临时 · ${name}' / '临时吃药' / 'PHQ-9 抑郁筛查' /
-  /// 'GAD-7 焦虑筛查' 硬编中文。传 closure 走 4 个 i18n key。
+  /// '每日打卡' / '临时 · ${name}' / '临时吃药' / 'PHQ-9 情绪自测' /
+  /// 'GAD-7 情绪自测' 硬编中文。传 closure 走 4 个 i18n key。
   /// v0.27 round 77 (R76-N11 修): 从 `AppLocalizations? l10n` 改 closure 注入
   /// (`checkInLabel` / `dailyLabel`)。
   static String _renderCheckInLabel(
@@ -367,9 +367,9 @@ class DayDetailCalculator {
       case CheckInType.temp:
         return medName != null && medName.isNotEmpty ? '临时 · $medName' : '临时吃药';
       case CheckInType.phq9:
-        return 'PHQ-9 抑郁筛查';
+        return 'PHQ-9 情绪自测';
       case CheckInType.gad7:
-        return 'GAD-7 焦虑筛查';
+        return 'GAD-7 情绪自测';
       case CheckInType.isi:
       case CheckInType.pss:
       case CheckInType.whodas:
@@ -387,7 +387,7 @@ class DayDetailCalculator {
 
   /// v0.27 round 77 (R76-N11 修): 改 closure 注入 (`phq9Name` / `gad7Name`),
   /// domain 0 flutter。
-  /// v0.31 P1-5: 硬编码中文 'PHQ-9 抑郁筛查' / 'GAD-7 焦虑筛查' 迁移到
+  /// v0.31 P1-5: 硬编码中文 'PHQ-9 情绪自测' / 'GAD-7 情绪自测' 迁移到
   /// Strings.dayDetailPhq9() / Strings.dayDetailGad7() — 但这两个已有
   /// ARB key (dayDetailPhq9 / dayDetailGad7), 直接用 Strings 模式。
   /// R114 BUG 4: 加 [scaleName] 按 id 派发 closure — 8 个 R90 新量表
@@ -404,18 +404,18 @@ class DayDetailCalculator {
     if (phq9Name != null || gad7Name != null) {
       switch (scaleId) {
         case 'phq9':
-          return phq9Name?.call() ?? 'PHQ-9 抑郁筛查';
+          return phq9Name?.call() ?? 'PHQ-9 情绪自测';
         case 'gad7':
-          return gad7Name?.call() ?? 'GAD-7 焦虑筛查';
+          return gad7Name?.call() ?? 'GAD-7 情绪自测';
         default:
           return scaleId;
       }
     }
     switch (scaleId) {
       case 'phq9':
-        return 'PHQ-9 抑郁筛查';
+        return 'PHQ-9 情绪自测';
       case 'gad7':
-        return 'GAD-7 焦虑筛查';
+        return 'GAD-7 情绪自测';
       default:
         return scaleId;
     }

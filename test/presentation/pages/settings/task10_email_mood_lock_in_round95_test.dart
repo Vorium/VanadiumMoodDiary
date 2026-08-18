@@ -31,7 +31,7 @@ void main() {
   group('email_preview 整文件删 lock-in (R95 sub-spec 2 task 10 A1)', () {
     test('R95 fix 1: email_preview.dart 文件不存在', () {
       // 验证 email_preview.dart 整文件已删 (移到 .mavis-trash)
-      final file = File('lib/presentation/pages/settings/email_preview.dart');
+      final file = File('lib/features/settings/presentation/pages/settings/email_preview.dart');
       expect(
         file.existsSync(),
         isFalse,
@@ -117,7 +117,7 @@ void main() {
       // 1.1.0 round 5b (Task 12): QuickMoodCarousel / SecondaryActionRow 删除,
       // 2 caller 移到 MoodHeroCard (widgets/mood_hero_card.dart 记录/回顾入口)
       final homePageSource = File(
-        'lib/presentation/pages/home/home_page.dart',
+        'lib/features/home/presentation/pages/home/home_page.dart',
       ).readAsStringSync();
       expect(
         homePageSource.contains('MoodDialog.show('),
@@ -127,7 +127,7 @@ void main() {
       );
 
       final homePageStateSource = File(
-        'lib/presentation/pages/home/home_page_state.dart',
+        'lib/features/home/presentation/pages/home/home_page_state.dart',
       ).readAsStringSync();
       // home_page_state.dart 也不应调 MoodDialog.show (薄壳已删)
       expect(
@@ -139,7 +139,7 @@ void main() {
       // 1.1.0 round 5b (Task 12): MoodRecorderPage.show() 2 caller
       // (_empty + _loaded 记录入口) 在 MoodHeroCard
       final moodHeroCardSource = File(
-        'lib/presentation/pages/home/widgets/mood_hero_card.dart',
+        'lib/features/home/presentation/pages/home/widgets/mood_hero_card.dart',
       ).readAsStringSync();
       final matches =
           'MoodRecorderPage.show('.allMatches(moodHeroCardSource).length;

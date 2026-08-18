@@ -394,7 +394,7 @@ void main() {
           .toList();
       expect(
         featureDirs.map((d) => d.path.split('/').last).toList()..sort(),
-        equals(['assessment', 'crisis', 'daily_tracking', 'medication', 'mood', 'vent']),
+        equals(['assessment', 'crisis', 'daily_tracking', 'home', 'medication', 'mood', 'settings', 'setup', 'tips', 'trend', 'vent', 'worry']),
         reason: 'R126 续 step 4 + step 5 收官 features/ 顶层 3 feature (daily_tracking + assessment + mood)',
       );
     });

@@ -143,6 +143,10 @@ void main() {
         if (entity is! File) continue;
         if (!entity.path.endsWith('.dart')) continue;
         final rel = entity.path.replaceAll('\\', '/');
+        // R128e (2026-08-18): lib/l10n/app_localizations*.dart 是 flutter
+        // gen-l10n 从 ARB 自动生成的翻译文件 (appleHealthTileTooltip 防御文案
+        // 走 ARB), 不是手写代码, 不参与 5.1.3 手写 claim 检查。
+        if (rel.startsWith('lib/l10n/app_localizations')) continue;
         final src = entity.readAsStringSync();
         final code = _stripCommentsForCode(src);
         final hits = _countOccurrences(code, _kAppleHealth);

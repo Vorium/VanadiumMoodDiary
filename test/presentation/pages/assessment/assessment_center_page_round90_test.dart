@@ -87,8 +87,8 @@ void main() {
     // 10 个量表 displayName 至少包含 PHQ-9 / GAD-7
     // v0.30 round 92 (P0 #14): 顶部 chart 加 10 chip 列表, PHQ-9 跟
     // GAD-7 文案同时出现在 chart chip + center card, 改 findsWidgets (≥1)
-    expect(find.text('PHQ-9 抑郁筛查'), findsWidgets);
-    expect(find.text('GAD-7 焦虑筛查'), findsWidgets);
+    expect(find.text('PHQ-9 情绪自测'), findsWidgets);
+    expect(find.text('GAD-7 情绪自测'), findsWidgets);
   });
 
   testWidgets('点 open 卡片 → 跳 /assessment/<scaleId>', (tester) async {

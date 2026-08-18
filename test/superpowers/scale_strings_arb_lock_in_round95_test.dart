@@ -801,7 +801,7 @@ void main() {
       expect(hant, 2, reason: 'zh_Hant.arb 应有 2 notifChannel* key');
     });
 
-    test('3 语 total = 1340 key (R116 round 4 清 9 orphan, 跟 check_arb_keys.py baseline 同步, R24 P1-21 修)',
+    test('3 语 total = 1345 key (R128e +5: ventTagCategory×3 + worryRelapseAction + appleHealthTileTooltip)',
         () {
       // 防御: 任意单语加 key 漏同步, 数字立刻不等 (R24 round 48 修)
       // v0.30 R95 sub-spec 7 task 53/55 加 13 new (8 migration + 5 timeAgo/dailyTracking) → 1045 → 1058
@@ -900,6 +900,8 @@ void main() {
       //   caller, R116 复审发现: todaySummaryStreak/CheckIn/Meds + homeTodayMetrics
       //   + homeQuickActionRecord/Start + homeActionAssessment/Medication +
       //   assessmentChipCurrent) → 1349 → 1340
+      // 1.1.0 R128e (2026-08-18): +4 key (ventTagCategoryWorkLife/EmotionalLife/
+      //   WellBeing + worryRelapseAction) → 1340 → 1344
       const pattern = r'^  "([a-zA-Z][a-zA-Z0-9]+)":';
       const l10nDir = 'lib/l10n';
       final zh = countIn('$l10nDir/app_zh.arb', pattern);
@@ -907,19 +909,18 @@ void main() {
       final hant = countIn('$l10nDir/app_zh_Hant.arb', pattern);
       expect(
         zh,
-        1340,
-        reason: 'zh.arb 应有 1340 key (R115 emotion-first 视觉重构 +21 变 1349, '
-            'R116 round 4 -9 orphan 变 1340)',
+        1345,
+        reason: 'zh.arb 应有 1345 key (R128e +5)',
       );
       expect(
         en,
-        1340,
-        reason: 'en.arb 应有 1340 key (跟 zh 同步)',
+        1345,
+        reason: 'en.arb 应有 1345 key (跟 zh 同步)',
       );
       expect(
         hant,
-        1340,
-        reason: 'zh_Hant.arb 应有 1340 key (跟 zh 同步)',
+        1345,
+        reason: 'zh_Hant.arb 应有 1345 key (跟 zh 同步)',
       );
     });
   });
@@ -933,8 +934,8 @@ void main() {
       // AppLocalizationsScaleTranslations 已移到 presentation/services/
       // (R75 P1-1 修, R95 防御退回)
       const t = StaticScaleTranslations();
-      expect(t.phq9Name(), 'PHQ-9 抑郁筛查');
-      expect(t.gad7Name(), 'GAD-7 焦虑筛查');
+      expect(t.phq9Name(), 'PHQ-9 情绪自测');
+      expect(t.gad7Name(), 'GAD-7 情绪自测');
       expect(t.crisisTitle(), '我们关心你');
     });
 

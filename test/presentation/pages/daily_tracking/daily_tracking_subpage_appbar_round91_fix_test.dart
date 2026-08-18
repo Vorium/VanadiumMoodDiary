@@ -343,12 +343,12 @@ void main() {
       expect(find.text('焦虑急躁'), findsNothing);
     });
 
-    testWidgets('TreatmentPage → AppBar title "Treatment"', (tester) async {
+    testWidgets('TreatmentPage → AppBar title "Self-care"', (tester) async {
       // v0.30 round 92 (audit-fixes / P0 #15): TreatmentPlaceholderPage
       // 替换为 TreatmentPage (4 字段 AddTreatmentDialog + 真 page)。
       await pump(tester, const TreatmentPage());
       expect(
-        find.text('Treatment'),
+        find.text('Self-care'),
         findsOneWidget,
         reason: 'TreatmentPage AppBar title 走 l10n.treatmentName',
       );

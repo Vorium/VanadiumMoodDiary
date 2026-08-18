@@ -205,9 +205,9 @@ class _HomeFabToolbarState extends State<HomeFabToolbar> {
               boxShadow: AppTokens.shadowOverlayOf(context),
             ),
             alignment: Alignment.center,
-            // gdc R128e audit 2026-08-18: 0.125 turns (45°) 改 0.5 turns (180°)
-            // 0.125 旋转让"展开 → 收起"语义模糊 (用户直觉是 180° 翻转)
-            // emil 决策: modal-like toggle 用 180° 让"开/关"语义清晰
+            // gdc R128e audit 2026-08-18: 0.125 turns（45°）改 0.5 turns（180°）
+            // 0.125 旋转让"展开 → 收起"语义模糊（用户直觉是 180° 翻转）
+            // emil 决策: modal-like toggle 用 180° 让"开／关"语义清晰
             child: AnimatedRotation(
               turns: _expanded ? 0.5 : 0,
               duration: Motion.duration(context, AppTokens.durFast),

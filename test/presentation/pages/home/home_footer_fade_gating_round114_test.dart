@@ -107,7 +107,7 @@ void main() {
 
     test('home_fab_toolbar 4 按钮 FadeIn duration: durFast', () async {
       final src =
-          await read('presentation/pages/home/widgets/home_fab_toolbar.dart');
+          await read('features/home/presentation/pages/home/widgets/home_fab_toolbar.dart');
       expect(src.contains('duration: AppTokens.durFast'), isTrue);
     });
   });

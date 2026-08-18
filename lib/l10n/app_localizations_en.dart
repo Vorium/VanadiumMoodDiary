@@ -12,6 +12,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get appName => 'MoodDiary';
 
   @override
+  String get appleHealthTileTooltip =>
+      'On-device data — not synced to Apple Health';
+
+  @override
   String get homeCheckIn => 'I took my meds today';
 
   @override
@@ -99,7 +103,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get settingsMedication => 'Medications';
 
   @override
-  String get settingsHealthData => 'Health data';
+  String get settingsHealthData => 'My data';
 
   @override
   String settingsHealthDataMedSub(int total, int done) {
@@ -184,10 +188,10 @@ class AppLocalizationsEn extends AppLocalizations {
       'View refill status for all medications';
 
   @override
-  String get settingsAssessment => 'Assessment';
+  String get settingsAssessment => 'Self Check-ins';
 
   @override
-  String get settingsAssessmentHistory => 'Assessment History';
+  String get settingsAssessmentHistory => 'Check-in History';
 
   @override
   String get settingsAssessmentHistorySubtitle =>
@@ -649,7 +653,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String reminderHubAssessmentDescEnabled(int days) {
-    return 'Remind every $days days to take assessment (PHQ-9 / GAD-7)';
+    return 'Remind every $days days to take a self check-in (PHQ-9 / GAD-7)';
   }
 
   @override
@@ -724,7 +728,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get reminderHubAssessmentSubtitle =>
-      'Get a psychological assessment reminder every N days';
+      'Get a self check-in reminder every N days';
 
   @override
   String get reminderHubInterval => 'Reminder interval';
@@ -1326,10 +1330,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get assessmentSeverityUnknown => 'Unknown';
 
   @override
-  String get assessmentScalePhq9 => 'PHQ-9 Depression Screening';
+  String get assessmentScalePhq9 => 'PHQ-9 Mood Check';
 
   @override
-  String get assessmentScaleGad7 => 'GAD-7 Anxiety Screening';
+  String get assessmentScaleGad7 => 'GAD-7 Mood Check';
 
   @override
   String get setupConsentRequired =>
@@ -1490,7 +1494,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String reportHistoryItemPatient(Object name) {
-    return 'Patient: $name';
+    return 'Recorded by: $name';
   }
 
   @override
@@ -2134,10 +2138,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get dayDetailTempMed => 'Temp dose';
 
   @override
-  String get dayDetailPhq9 => 'PHQ-9 Depression Screening';
+  String get dayDetailPhq9 => 'PHQ-9 Mood Check';
 
   @override
-  String get dayDetailGad7 => 'GAD-7 Anxiety Screening';
+  String get dayDetailGad7 => 'GAD-7 Mood Check';
 
   @override
   String get scaleHotlineCn => 'National 24h Psychological Aid Hotline';
@@ -2257,8 +2261,7 @@ class AppLocalizationsEn extends AppLocalizations {
       'Over the last 2 weeks, how often have you been bothered by the following problems?';
 
   @override
-  String get phq9ShortDescription =>
-      'Depression screening over the last 2 weeks';
+  String get phq9ShortDescription => 'Mood check over the last 2 weeks';
 
   @override
   String get gad7Item0 => 'Feeling nervous, anxious or on edge';
@@ -2310,7 +2313,7 @@ class AppLocalizationsEn extends AppLocalizations {
       'Over the last 2 weeks, how often have you been bothered by the following problems?';
 
   @override
-  String get gad7ShortDescription => 'Anxiety screening over the last 2 weeks';
+  String get gad7ShortDescription => 'Mood check over the last 2 weeks';
 
   @override
   String get homeFabVent => 'Mood vent';
@@ -2375,7 +2378,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get homeMoreSheetTitle => 'More entries';
 
   @override
-  String get homeMoreMedication => 'Medication';
+  String get homeMoreMedication => 'Med Reminders';
 
   @override
   String homeMoreMedicationSub(int total, int done) {
@@ -2383,7 +2386,7 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get homeMoreAssessment => 'Assessment';
+  String get homeMoreAssessment => 'Self Check-ins';
 
   @override
   String homeMoreAssessmentSub(int count) {
@@ -4083,7 +4086,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get settingsProfileTitle => 'Profile';
 
   @override
-  String get settingsProfileSubtitle => 'Health records, medical info';
+  String get settingsProfileSubtitle => 'Personal profile & records';
 
   @override
   String get todaySummaryMood => 'Mood';

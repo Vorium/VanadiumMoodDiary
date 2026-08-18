@@ -33,8 +33,8 @@ import 'package:chroniccare/domain/logic/whodas.dart';
 
 /// 列出所有可用量表 (顺序固定: PHQ-9 先, 临床优先)
 List<AssessmentScale> allScales() => const [
-      phq9Scale, // 1. PHQ-9 抑郁筛查
-      gad7Scale, // 2. GAD-7 焦虑筛查
+      phq9Scale, // 1. PHQ-9 情绪自测
+      gad7Scale, // 2. GAD-7 情绪自测
       isiScale, // 3. ISI 失眠严重指数
       pssScale, // 4. PSS 压力量表
       whodasScale, // 5. WHODAS 2.0 残疾评定

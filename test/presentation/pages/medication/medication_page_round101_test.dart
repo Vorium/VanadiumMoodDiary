@@ -36,9 +36,9 @@ Widget _wrap({
       allCheckInsProvider.overrideWith((ref) => Stream.value(checkIns)),
     ],
     child: MaterialApp(
-      theme: ThemeData.light(),
       localizationsDelegates: AppLocalizations.localizationsDelegates,
       supportedLocales: AppLocalizations.supportedLocales,
+      theme: ThemeData.light(),
       locale: const Locale('zh'),
       // v0.32 R109 round 6 part 2: R108 R31 god class 拆后, medication_page
       // 内部用 Row/Wrap (主统计 + 时间段 + 快捷操作), 需要 bounded width.
@@ -157,7 +157,8 @@ void main() {
       await tester.pumpAndSettle();
 
       // 横滚 4 tile 全在 tree (cacheExtent 内), 拿 metricId 断言语义映射:
-      // 待服=medication(红) / 已服=checkIn(绿) / 需续方=contact(橙) / 日历=trend(蓝)
+      // R129 P0-10 修正: 待服=medication(红) / 已服=medication(红, 业务"已服"
+      // 与 checkIn enum 冲突后改同色同 icon) / 需续方=contact(橙) / 日历=trend(蓝)
       final tiles = tester
           .widgetList<AppleHealthTile>(
             find.byType(AppleHealthTile, skipOffstage: false),
@@ -165,14 +166,14 @@ void main() {
           .toList();
       expect(tiles, hasLength(4));
       expect(tiles[0].metricId, 'medication');
-      expect(tiles[1].metricId, 'checkIn');
+      expect(tiles[1].metricId, 'medication');
       expect(tiles[2].metricId, 'contact');
       expect(tiles[3].metricId, 'trend');
-      // 4 tile icon 也随 metricId 区分 (不再全 Icons.medication)
+      // 4 tile icon 也随 metricId 区分 (R129 P0-10 后 已服/待服 同 medication)
       expect(
         tiles.map((t) => t.metricId).toSet(),
-        hasLength(4),
-        reason: 'AH-16: 4 tile 必须 4 种语义, 不允许同色同 icon',
+        hasLength(3),
+        reason: 'R129 P0-10: 4 tile 3 种语义 (medication×2 + contact + trend)',
       );
     });
   });

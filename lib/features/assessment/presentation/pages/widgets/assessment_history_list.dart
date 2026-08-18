@@ -104,8 +104,8 @@ class _HistoryItem extends StatelessWidget {
                     ),
                     style: AppTokens.textStyleCaptionStrong(context),
                   ),
-                  // R128e 医疗声称降级: 删 _SeverityChip (显示"轻度/中度/重度"
-                  // 临床严重度 = 诊断行为)
+                  // R128e 医疗声称降级: 删 _SeverityChip（显示"轻度／中度／重度"
+                  // 临床严重度 = 诊断行为）
                 ],
               ),
               const SizedBox(height: AppTokens.spacingXxxs),
@@ -165,5 +165,5 @@ class _HistoryItem extends StatelessWidget {
   }
 }
 
-// R128e 医疗声称降级: 删 _SeverityChip (显示"轻度/中度/重度"临床严重度
-// = 诊断行为)。历史列表只显示量表名 + 分数 + 时间。
+// R128e 医疗声称降级: 删 _SeverityChip（显示"轻度／中度／重度"临床严重度
+// = 诊断行为）。历史列表只显示量表名 + 分数 + 时间。

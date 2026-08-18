@@ -94,6 +94,8 @@ void main() {
       _setBigView(tester);
       await tester.pumpWidget(
         const MaterialApp(
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
           home: Scaffold(
             body: Center(
               child: SizedBox(
@@ -203,6 +205,8 @@ void main() {
       // 模拟 medication_page 顶部 4-5 tile 横滚 (不嵌 ListView 内, 走 SizedBox)
       await tester.pumpWidget(
         const MaterialApp(
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
           home: Scaffold(
             body: SingleChildScrollView(
               child: Column(

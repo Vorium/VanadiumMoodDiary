@@ -237,7 +237,7 @@ void main() {
 
   test('3) vent 撤回路径源码 lock-in: withdraw 在 try 内 + 失败 snackbar', () {
     final source = File(
-      'lib/presentation/pages/settings/legal_page.dart',
+      'lib/features/settings/presentation/pages/settings/legal_page.dart',
     ).readAsStringSync();
     final start = source.indexOf('// 2 个选择都标 withdrawn=true');
     expect(start, isNot(-1), reason: 'vent withdraw 段注释必须存在');

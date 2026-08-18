@@ -12,6 +12,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/presentation/widgets/apple_health_tile.dart';
 import 'package:chroniccare/presentation/widgets/stat_card.dart';
 
@@ -21,6 +22,8 @@ void main() {
         (tester) async {
       await tester.pumpWidget(
         const MaterialApp(
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
           home: Scaffold(body: StatCard(label: 'label', value: '5')),
         ),
       );
@@ -35,6 +38,8 @@ void main() {
     testWidgets('非 int 数字 (静态 Text 路径) 同样 tabularFigures', (tester) async {
       await tester.pumpWidget(
         const MaterialApp(
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
           home: Scaffold(body: StatCard(label: 'label', value: '1.2kg')),
         ),
       );
@@ -48,6 +53,8 @@ void main() {
     testWidgets('textScaler 2.0 → 不溢出 (clamp 1.3)', (tester) async {
       await tester.pumpWidget(
         MaterialApp(
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
           builder: (context, child) => MediaQuery(
             data: MediaQuery.of(context)
                 .copyWith(textScaler: const TextScaler.linear(2.0)),
@@ -79,6 +86,8 @@ void main() {
     testWidgets('正常 textScaler 1.0 → 行为不变', (tester) async {
       await tester.pumpWidget(
         const MaterialApp(
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
           home: Scaffold(
             body: AppleHealthTile(
               metricId: 'medication',

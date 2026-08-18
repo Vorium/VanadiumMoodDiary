@@ -33,6 +33,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:chroniccare_theme/chroniccare_theme.dart';
+import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/presentation/widgets/press_feedback.dart';
 
 /// Apple Health "favorites" 风格彩色 metric 模块
@@ -101,7 +102,9 @@ class AppleHealthTile extends StatelessWidget {
           // R129 P0-10 (R128e 综合审视修真): tooltip "应用内数据, 不上 Apple Health"
           // R31 P0-08 跨 8 round 修真 — 视觉 vs 数据 gap 防御 (R128c 5.1.3 used-but-not-declared
           // 防御一致战线, emotion-first 0 HealthKit 集成, 避免用户疑惑 "为何没数据")
-          message: '应用内数据，不上 Apple Health',
+          // R128e 医疗声称降级: 文案迁 ARB (appleHealthTileTooltip), 避免 lib/
+          // 非注释代码含 "Apple Health" 字面 (lock-in test + 硬编码中文守门员)
+          message: AppLocalizations.of(context).appleHealthTileTooltip,
           child: Container(
             height: tileHeight,
             width: tileWidth,

@@ -61,12 +61,12 @@ void main() {
 
     // PHQ-9 / GAD-7 隐藏
     expect(
-      find.text('PHQ-9 抑郁筛查'),
+      find.text('PHQ-9 情绪自测'),
       findsNothing,
       reason: 'R93: phqGad7I18nEnabled=false 时 PHQ-9 隐藏',
     );
     expect(
-      find.text('GAD-7 焦虑筛查'),
+      find.text('GAD-7 情绪自测'),
       findsNothing,
       reason: 'R93: phqGad7I18nEnabled=false 时 GAD-7 隐藏',
     );
@@ -93,7 +93,7 @@ void main() {
     expect(find.byType(Card), findsNWidgets(12));
 
     // PHQ-9 / GAD-7 渲染
-    expect(find.text('PHQ-9 抑郁筛查'), findsWidgets);
-    expect(find.text('GAD-7 焦虑筛查'), findsWidgets);
+    expect(find.text('PHQ-9 情绪自测'), findsWidgets);
+    expect(find.text('GAD-7 情绪自测'), findsWidgets);
   });
 }

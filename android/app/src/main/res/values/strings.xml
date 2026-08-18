@@ -2,8 +2,8 @@
 <!--
   v0.29 R85 (spzh P0-57 修复): 默认 locale (中文) app name.
   AndroidManifest.xml 第 45 行 android:label 改用 @string/app_name
-  (之前硬编 "慢病管家" → 英文设备桌面显示中文).
+  (之前硬编旧名 → 英文设备桌面显示中文).
 -->
 <resources>
-    <string name="app_name">慢病管家</string>
+    <string name="app_name">MoodDiary 心情日记</string>
 </resources>

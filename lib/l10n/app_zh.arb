@@ -1,6 +1,7 @@
 {
   "@@locale": "zh",
   "appName": "MoodDiary 心情日记",
+  "appleHealthTileTooltip": "应用内数据，不上 Apple Health",
   "homeCheckIn": "我今天吃了药",
   "homeCheckedIn": "今天已打卡 ✓",
   "homeStreak": "已坚持 {days} 天",
@@ -58,7 +59,7 @@
   "setupPrivacy2": "• 不会上传到任何云端服务器",
   "setupPrivacy3": "• 您可以随时导出",
   "settingsMedication": "常吃药",
-  "settingsHealthData": "健康数据",
+  "settingsHealthData": "我的数据",
   "settingsHealthDataMedSub": "{total} 种药物 · 今日 {done}/{total} 已服",
   "@settingsHealthDataMedSub": {
     "description": "v1.1.0 round 11 (R115): 设置-健康数据-用药副标题",
@@ -93,10 +94,10 @@
   "settingsImportSubtitle": "从 JSON 恢复（覆盖现有数据）",
   "settingsReminders": "提醒",
   "settingsReminderCenter": "提醒中心",
-  "settingsReminderCenterSubtitle": "管理所有提醒：每日打卡、用药时间、续方、心理评估",
+  "settingsReminderCenterSubtitle": "管理所有提醒：每日打卡、用药时间、续方、自我测评",
   "settingsRefillManagement": "续方管理",
   "settingsRefillManagementSubtitle": "集中查看所有药物的续方状态",
-  "settingsAssessment": "心理评估",
+  "settingsAssessment": "自我测评",
   "settingsAssessmentHistory": "评估历史",
   "settingsAssessmentHistorySubtitle": "查看所有 PHQ-9 ／ GAD-7 评估的折线图与对比",
   "@settingsAboutVersion": {
@@ -136,7 +137,7 @@
   "settingsClearAllData": "清空所有数据",
   "settingsClearAllDataSubtitle": "删除全部打卡 ／ 用药 ／ 评估 ／ 树洞 ／ 联系人（无法恢复）",
   "settingsClearAllDataDialogTitle": "确认清空所有数据？",
-  "settingsClearAllDataDialogBody": "以下数据将被永久删除，无法恢复：\n• 打卡记录\n• 用药与服药历史\n• 心理评估结果\n• 情绪日记\n• 树洞（文字+录音）\n\n清空后 App 会跳回首次设置流程。建议先导出 JSON 备份。",
+  "settingsClearAllDataDialogBody": "以下数据将被永久删除，无法恢复：\n• 打卡记录\n• 用药与服药历史\n• 自我测评结果\n• 情绪日记\n• 树洞（文字+录音）\n\n清空后 App 会跳回首次设置流程。建议先导出 JSON 备份。",
   "settingsClearAllDataConfirm": "我已备份，确认清空",
   "settingsClearAllDataSuccess": "已清空所有数据",
   "commonSave": "保存",
@@ -320,7 +321,7 @@
   "notificationStatusCardOemStepOthers1": "设置 → 应用 → MoodDiary 心情日记 → 通知 → 全部开启",
   "notificationStatusCardOemStepOthers2": "设置 → 电池 → 后台运行 → 改为「允许」",
   "notificationStatusCardOemGeneralTip": "通用建议：精确闹钟被某些 ROM 静默拒绝时，首次启动 App 时系统会弹「是否允许」，请选「允许」。",
-  "reminderHubDescription": "集中管理所有提醒：每天打卡、用药时间、续方日期、心理评估。",
+  "reminderHubDescription": "集中管理所有提醒：每天打卡、用药时间、续方日期、自我测评。",
   "reminderHubDailyTitle": "每日打卡提醒",
   "reminderHubDailyDesc": "每天 20:00 推送「记得打卡」，漏 1 次没关系",
   "reminderHubDailyStatus": "已启用 · 每天 20:00",
@@ -328,7 +329,7 @@
   "reminderHubStatusError": "出错",
   "reminderHubRefillTitle": "续方提醒",
   "reminderHubAssessmentTitle": "周期评估提醒",
-  "reminderHubAssessmentDescEnabled": "每 {days} 天提醒做心理评估（PHQ-9 ／ GAD-7）",
+  "reminderHubAssessmentDescEnabled": "每 {days} 天提醒做自我测评（PHQ-9 ／ GAD-7）",
   "@reminderHubAssessmentDescEnabled": {
     "placeholders": {
       "days": {
@@ -418,7 +419,7 @@
   },
   "reminderHubManageRefill": "管理续方",
   "reminderHubEnable": "启用",
-  "reminderHubAssessmentSubtitle": "每隔 N 天推送一次心理评估",
+  "reminderHubAssessmentSubtitle": "每隔 N 天提醒一次自我测评",
   "reminderHubInterval": "提醒间隔",
   "reminderHubEveryNDays": "每 {days} 天",
   "@reminderHubEveryNDays": {
@@ -704,7 +705,7 @@
   },
   "errorPageHint": "这个地址可能已经失效，或者链接有误。",
   "errorPageBackHome": "返回首页",
-  "assessmentReminderEnabled": "已开启：每 {days} 天提醒做心理评估",
+  "assessmentReminderEnabled": "已开启：每 {days} 天提醒做自我测评",
   "@assessmentReminderEnabled": {
     "placeholders": {
       "days": {
@@ -720,7 +721,7 @@
       }
     }
   },
-  "assessmentReminderSubtitleEnabled": "每 {days} 天提醒我做一次心理评估",
+  "assessmentReminderSubtitleEnabled": "每 {days} 天提醒我做一次自我测评",
   "@assessmentReminderSubtitleEnabled": {
     "placeholders": {
       "days": {
@@ -775,7 +776,7 @@
     }
   },
   "assessmentHistoryEmpty": "还没有评估记录",
-  "assessmentHistoryEmptyHint": "完成一次心理评估后，记录会显示在这里",
+  "assessmentHistoryEmptyHint": "完成一次自我测评后，记录会显示在这里",
   "assessmentHistoryStartFirst": "开始第一次评估",
   "assessmentHistoryTotalAssessments": "总评估",
   "assessmentHistoryTimes": "次",
@@ -810,8 +811,8 @@
   "assessmentSeverityModeratelySevere": "中重度",
   "assessmentSeveritySevere": "重度",
   "assessmentSeverityUnknown": "未知",
-  "assessmentScalePhq9": "PHQ-9 抑郁筛查",
-  "assessmentScaleGad7": "GAD-7 焦虑筛查",
+  "assessmentScalePhq9": "PHQ-9 情绪自测",
+  "assessmentScaleGad7": "GAD-7 情绪自测",
   "setupConsentRequired": "请先完成法律文件阅读与同意",
   "setupValidationNameRequired": "请输入您的名字",
   "setupPresetTitle": "📋 选择预置方案",
@@ -884,7 +885,7 @@
       }
     }
   },
-  "reportHistoryItemPatient": "患者：{name}",
+  "reportHistoryItemPatient": "记录人：{name}",
   "@reportHistoryItemPatient": {
     "placeholders": {
       "name": {
@@ -970,7 +971,7 @@
   "trendTitle": "我的趋势",
   "trendLast30Days": "最近 30 天",
   "trendLast6Months": "最近 6 个月",
-  "trendAssessmentHistory": "心理评估历史",
+  "trendAssessmentHistory": "自我测评历史",
   "trendMoodHistory": "情绪日记历史",
   "trendViewList": "列表",
   "trendViewCalendar": "日历",
@@ -1054,7 +1055,7 @@
     }
   },
   "trendNoAssessments": "还没有评估记录",
-  "trendNoAssessmentsHint": "完成一次心理评估后，折线图会自动出现在这里",
+  "trendNoAssessmentsHint": "完成一次自我测评后，折线图会自动出现在这里",
   "trendNoMoodEntries": "还没有情绪记录",
   "trendNoMoodEntriesHint": "在主页点击「记一下情绪」开始记录",
   "trendCbtReratedChartTitle": "重评效果",
@@ -1269,12 +1270,12 @@
   "presetMedSsriMorningDesc": "1 种药，每天早 8 点服用（适用 SSRI ／ SNRI 类）",
   "presetMedMoodStabilizerTwiceTitle": "情绪稳定剂 · 早晚两次",
   "presetMedMoodStabilizerTwiceDesc": "1 种药，每天早 8 点 + 晚 20 点",
-  "presetMedComboSsriBedtimeTitle": "联合 · 早抗抑郁 + 晚助眠",
-  "presetMedComboSsriBedtimeDesc": "2 种药：早 8 点 SSRI + 晚 21 点助眠",
+  "presetMedComboSsriBedtimeTitle": "联合 · 早晚分时",
+  "presetMedComboSsriBedtimeDesc": "2 种药：早 8 点一种 + 晚 21 点一种",
   "presetMedComboAntipsychoticFullTitle": "重性 · 早中晚三次",
   "presetMedComboAntipsychoticFullDesc": "2 种药：早 8 ／ 午 13 ／ 晚 20，覆盖全天",
-  "presetMedSsriName": "SSRI 类抗抑郁药",
-  "presetMedSsriHint": "常见 SSRI ／ SNRI 类抗抑郁药（具体药名以医生处方为准）",
+  "presetMedSsriName": "SSRI ／ SNRI 类",
+  "presetMedSsriHint": "常见 SSRI ／ SNRI 类（具体药名以医生处方为准）",
   "presetMedMoodStabilizerName": "情绪稳定剂",
   "presetMedMoodStabilizerHint": "常见情绪稳定剂类（具体药名以医生处方为准）",
   "presetMedSleepAidName": "助眠药",
@@ -1301,8 +1302,8 @@
     }
   },
   "dayDetailTempMed": "临时吃药",
-  "dayDetailPhq9": "PHQ-9 抑郁筛查",
-  "dayDetailGad7": "GAD-7 焦虑筛查",
+  "dayDetailPhq9": "PHQ-9 情绪自测",
+  "dayDetailGad7": "GAD-7 情绪自测",
   "scaleHotlineCn": "全国 24 小时心理援助热线",
   "scaleHotlineCn2": "北京心理危机研究与干预中心",
   "scaleHotlineUs": "988 Suicide & Crisis Lifeline (US)",
@@ -1345,7 +1346,7 @@
   "phq9SeveritySummary3": "中重度抑郁倾向",
   "phq9SeveritySummary4": "重度抑郁倾向",
   "phq9Instruction": "过去两周内，你有多经常被以下问题困扰？",
-  "phq9ShortDescription": "过去两周的抑郁倾向筛查",
+  "phq9ShortDescription": "过去两周的情绪倾向自测",
   "gad7Item0": "感到紧张、焦虑或急切",
   "gad7Item1": "不能停止或控制担忧",
   "gad7Item2": "对各种事情担忧过多",
@@ -1362,7 +1363,7 @@
   "gad7SeveritySummary2": "中度焦虑倾向",
   "gad7SeveritySummary3": "重度焦虑倾向",
   "gad7Instruction": "过去两周内，你有多经常被以下问题困扰？",
-  "gad7ShortDescription": "过去两周的焦虑倾向筛查",
+  "gad7ShortDescription": "过去两周的情绪倾向自测",
   "homeFabVent": "树洞",
   "homeMoodHeroTitle": "今日心情",
   "homeMoodHeroRecord": "记录心情",
@@ -1397,7 +1398,7 @@
   "homeMoreEntryTitle": "更多",
   "homeMoreEntrySubtitle": "用药 · 量表 · 危机热线",
   "homeMoreSheetTitle": "更多入口",
-  "homeMoreMedication": "用药管理",
+  "homeMoreMedication": "用药提醒",
   "homeMoreMedicationSub": "{total} 种药物 · 今日 {done}/{total} 已服",
   "@homeMoreMedicationSub": {
     "description": "v1.1.0 round 11 (R115): BottomSheet 用药管理副标题",
@@ -1406,7 +1407,7 @@
       "done": { "type": "int" }
     }
   },
-  "homeMoreAssessment": "心理评估",
+  "homeMoreAssessment": "自我测评",
   "homeMoreAssessmentSub": "{count} 个量表",
   "@homeMoreAssessmentSub": {
     "description": "v1.1.0 round 11 (R115): BottomSheet 心理评估副标题",
@@ -3003,7 +3004,7 @@
   "moodDeleted": "已删除",
   "moodPeriodAfternoon": "下午",
   "settingsProfileTitle": "个人资料",
-  "settingsProfileSubtitle": "健康档案、医疗信息",
+  "settingsProfileSubtitle": "个人档案、记录信息",
   "todaySummaryMood": "心情",
   "@todaySummaryStreakDays": {
     "description": "R103: 主頁摘要卡連續打卡天數 (placeholder {count} 是天數）",
@@ -3013,7 +3014,7 @@
       }
     }
   },
-  "setupConsentMedicalDisclaimer": "我已阅读并理解《医学免责声明》：本 App 不提供医疗建议、诊断或治疗，不能替代专业医疗服务",
+  "setupConsentMedicalDisclaimer": "我已阅读并理解《免责声明》：本 App 不提供医疗建议、诊断或治疗，不能替代专业医疗服务",
   "trackingCustomize": "自定义追踪项",
   "trackingUnknownItem": "未知项目",
   "trackingPin": "置顶",

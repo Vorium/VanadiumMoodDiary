@@ -197,7 +197,7 @@ void main() {
       // 验证: Phq9TranslationsInterface 类型可作为类型签名 (caller 写
       // `Phq9TranslationsInterface phq9 = Phq9Translations();`)
       const Phq9TranslationsInterface phq9 = Phq9Translations();
-      expect(phq9.phq9Name(), 'PHQ-9 抑郁筛查');
+      expect(phq9.phq9Name(), 'PHQ-9 情绪自测');
       expect(phq9.phq9Item(0), isNotEmpty);
     });
   });

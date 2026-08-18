@@ -12,6 +12,9 @@ class AppLocalizationsZh extends AppLocalizations {
   String get appName => 'MoodDiary 心情日记';
 
   @override
+  String get appleHealthTileTooltip => '应用内数据，不上 Apple Health';
+
+  @override
   String get homeCheckIn => '我今天吃了药';
 
   @override
@@ -98,7 +101,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get settingsMedication => '常吃药';
 
   @override
-  String get settingsHealthData => '健康数据';
+  String get settingsHealthData => '我的数据';
 
   @override
   String settingsHealthDataMedSub(int total, int done) {
@@ -168,7 +171,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get settingsReminderCenter => '提醒中心';
 
   @override
-  String get settingsReminderCenterSubtitle => '管理所有提醒：每日打卡、用药时间、续方、心理评估';
+  String get settingsReminderCenterSubtitle => '管理所有提醒：每日打卡、用药时间、续方、自我测评';
 
   @override
   String get settingsRefillManagement => '续方管理';
@@ -177,7 +180,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get settingsRefillManagementSubtitle => '集中查看所有药物的续方状态';
 
   @override
-  String get settingsAssessment => '心理评估';
+  String get settingsAssessment => '自我测评';
 
   @override
   String get settingsAssessmentHistory => '评估历史';
@@ -259,7 +262,7 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get settingsClearAllDataDialogBody =>
-      '以下数据将被永久删除，无法恢复：\n• 打卡记录\n• 用药与服药历史\n• 心理评估结果\n• 情绪日记\n• 树洞（文字+录音）\n\n清空后 App 会跳回首次设置流程。建议先导出 JSON 备份。';
+      '以下数据将被永久删除，无法恢复：\n• 打卡记录\n• 用药与服药历史\n• 自我测评结果\n• 情绪日记\n• 树洞（文字+录音）\n\n清空后 App 会跳回首次设置流程。建议先导出 JSON 备份。';
 
   @override
   String get settingsClearAllDataConfirm => '我已备份，确认清空';
@@ -592,7 +595,7 @@ class AppLocalizationsZh extends AppLocalizations {
       '通用建议：精确闹钟被某些 ROM 静默拒绝时，首次启动 App 时系统会弹「是否允许」，请选「允许」。';
 
   @override
-  String get reminderHubDescription => '集中管理所有提醒：每天打卡、用药时间、续方日期、心理评估。';
+  String get reminderHubDescription => '集中管理所有提醒：每天打卡、用药时间、续方日期、自我测评。';
 
   @override
   String get reminderHubDailyTitle => '每日打卡提醒';
@@ -617,7 +620,7 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String reminderHubAssessmentDescEnabled(int days) {
-    return '每 $days 天提醒做心理评估（PHQ-9 ／ GAD-7）';
+    return '每 $days 天提醒做自我测评（PHQ-9 ／ GAD-7）';
   }
 
   @override
@@ -688,7 +691,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get reminderHubEnable => '启用';
 
   @override
-  String get reminderHubAssessmentSubtitle => '每隔 N 天推送一次心理评估';
+  String get reminderHubAssessmentSubtitle => '每隔 N 天提醒一次自我测评';
 
   @override
   String get reminderHubInterval => '提醒间隔';
@@ -1143,7 +1146,7 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String assessmentReminderEnabled(int days) {
-    return '已开启：每 $days 天提醒做心理评估';
+    return '已开启：每 $days 天提醒做自我测评';
   }
 
   @override
@@ -1153,7 +1156,7 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String assessmentReminderSubtitleEnabled(int days) {
-    return '每 $days 天提醒我做一次心理评估';
+    return '每 $days 天提醒我做一次自我测评';
   }
 
   @override
@@ -1214,7 +1217,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get assessmentHistoryEmpty => '还没有评估记录';
 
   @override
-  String get assessmentHistoryEmptyHint => '完成一次心理评估后，记录会显示在这里';
+  String get assessmentHistoryEmptyHint => '完成一次自我测评后，记录会显示在这里';
 
   @override
   String get assessmentHistoryStartFirst => '开始第一次评估';
@@ -1272,10 +1275,10 @@ class AppLocalizationsZh extends AppLocalizations {
   String get assessmentSeverityUnknown => '未知';
 
   @override
-  String get assessmentScalePhq9 => 'PHQ-9 抑郁筛查';
+  String get assessmentScalePhq9 => 'PHQ-9 情绪自测';
 
   @override
-  String get assessmentScaleGad7 => 'GAD-7 焦虑筛查';
+  String get assessmentScaleGad7 => 'GAD-7 情绪自测';
 
   @override
   String get setupConsentRequired => '请先完成法律文件阅读与同意';
@@ -1422,7 +1425,7 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String reportHistoryItemPatient(Object name) {
-    return '患者：$name';
+    return '记录人：$name';
   }
 
   @override
@@ -1509,7 +1512,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get trendLast6Months => '最近 6 个月';
 
   @override
-  String get trendAssessmentHistory => '心理评估历史';
+  String get trendAssessmentHistory => '自我测评历史';
 
   @override
   String get trendMoodHistory => '情绪日记历史';
@@ -1612,7 +1615,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get trendNoAssessments => '还没有评估记录';
 
   @override
-  String get trendNoAssessmentsHint => '完成一次心理评估后，折线图会自动出现在这里';
+  String get trendNoAssessmentsHint => '完成一次自我测评后，折线图会自动出现在这里';
 
   @override
   String get trendNoMoodEntries => '还没有情绪记录';
@@ -1977,10 +1980,10 @@ class AppLocalizationsZh extends AppLocalizations {
   String get presetMedMoodStabilizerTwiceDesc => '1 种药，每天早 8 点 + 晚 20 点';
 
   @override
-  String get presetMedComboSsriBedtimeTitle => '联合 · 早抗抑郁 + 晚助眠';
+  String get presetMedComboSsriBedtimeTitle => '联合 · 早晚分时';
 
   @override
-  String get presetMedComboSsriBedtimeDesc => '2 种药：早 8 点 SSRI + 晚 21 点助眠';
+  String get presetMedComboSsriBedtimeDesc => '2 种药：早 8 点一种 + 晚 21 点一种';
 
   @override
   String get presetMedComboAntipsychoticFullTitle => '重性 · 早中晚三次';
@@ -1990,10 +1993,10 @@ class AppLocalizationsZh extends AppLocalizations {
       '2 种药：早 8 ／ 午 13 ／ 晚 20，覆盖全天';
 
   @override
-  String get presetMedSsriName => 'SSRI 类抗抑郁药';
+  String get presetMedSsriName => 'SSRI ／ SNRI 类';
 
   @override
-  String get presetMedSsriHint => '常见 SSRI ／ SNRI 类抗抑郁药（具体药名以医生处方为准）';
+  String get presetMedSsriHint => '常见 SSRI ／ SNRI 类（具体药名以医生处方为准）';
 
   @override
   String get presetMedMoodStabilizerName => '情绪稳定剂';
@@ -2036,10 +2039,10 @@ class AppLocalizationsZh extends AppLocalizations {
   String get dayDetailTempMed => '临时吃药';
 
   @override
-  String get dayDetailPhq9 => 'PHQ-9 抑郁筛查';
+  String get dayDetailPhq9 => 'PHQ-9 情绪自测';
 
   @override
-  String get dayDetailGad7 => 'GAD-7 焦虑筛查';
+  String get dayDetailGad7 => 'GAD-7 情绪自测';
 
   @override
   String get scaleHotlineCn => '全国 24 小时心理援助热线';
@@ -2150,7 +2153,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get phq9Instruction => '过去两周内，你有多经常被以下问题困扰？';
 
   @override
-  String get phq9ShortDescription => '过去两周的抑郁倾向筛查';
+  String get phq9ShortDescription => '过去两周的情绪倾向自测';
 
   @override
   String get gad7Item0 => '感到紧张、焦虑或急切';
@@ -2201,7 +2204,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get gad7Instruction => '过去两周内，你有多经常被以下问题困扰？';
 
   @override
-  String get gad7ShortDescription => '过去两周的焦虑倾向筛查';
+  String get gad7ShortDescription => '过去两周的情绪倾向自测';
 
   @override
   String get homeFabVent => '树洞';
@@ -2265,7 +2268,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get homeMoreSheetTitle => '更多入口';
 
   @override
-  String get homeMoreMedication => '用药管理';
+  String get homeMoreMedication => '用药提醒';
 
   @override
   String homeMoreMedicationSub(int total, int done) {
@@ -2273,7 +2276,7 @@ class AppLocalizationsZh extends AppLocalizations {
   }
 
   @override
-  String get homeMoreAssessment => '心理评估';
+  String get homeMoreAssessment => '自我测评';
 
   @override
   String homeMoreAssessmentSub(int count) {
@@ -3911,14 +3914,14 @@ class AppLocalizationsZh extends AppLocalizations {
   String get settingsProfileTitle => '个人资料';
 
   @override
-  String get settingsProfileSubtitle => '健康档案、医疗信息';
+  String get settingsProfileSubtitle => '个人档案、记录信息';
 
   @override
   String get todaySummaryMood => '心情';
 
   @override
   String get setupConsentMedicalDisclaimer =>
-      '我已阅读并理解《医学免责声明》：本 App 不提供医疗建议、诊断或治疗，不能替代专业医疗服务';
+      '我已阅读并理解《免责声明》：本 App 不提供医疗建议、诊断或治疗，不能替代专业医疗服务';
 
   @override
   String get trackingCustomize => '自定义追踪项';
@@ -4402,6 +4405,9 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get appName => 'MoodDiary 心情日記';
 
   @override
+  String get appleHealthTileTooltip => '應用內資料，不上 Apple Health';
+
+  @override
   String get homeCheckIn => '我今天吃了藥';
 
   @override
@@ -4488,7 +4494,7 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get settingsMedication => '常吃藥';
 
   @override
-  String get settingsHealthData => '健康數據';
+  String get settingsHealthData => '我的數據';
 
   @override
   String settingsHealthDataMedSub(int total, int done) {
@@ -4558,7 +4564,7 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get settingsReminderCenter => '提醒中心';
 
   @override
-  String get settingsReminderCenterSubtitle => '管理所有提醒：每日打卡、用藥時間、續方、心理評估';
+  String get settingsReminderCenterSubtitle => '管理所有提醒：每日打卡、用藥時間、續方、自我測評';
 
   @override
   String get settingsRefillManagement => '續方管理';
@@ -4567,7 +4573,7 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get settingsRefillManagementSubtitle => '集中查看所有藥物的續方狀態';
 
   @override
-  String get settingsAssessment => '心理評估';
+  String get settingsAssessment => '自我測評';
 
   @override
   String get settingsAssessmentHistory => '評估歷史';
@@ -4649,7 +4655,7 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
 
   @override
   String get settingsClearAllDataDialogBody =>
-      '以下數據將被永久刪除，無法恢復：\n• 打卡記錄\n• 用藥與服藥歷史\n• 心理評估結果\n• 情緒日記\n• 樹洞（文字+錄音）\n\n清空後 App 會跳回首次設置流程。建議先導出 JSON 備份。';
+      '以下數據將被永久刪除，無法恢復：\n• 打卡記錄\n• 用藥與服藥歷史\n• 自我測評結果\n• 情緒日記\n• 樹洞（文字+錄音）\n\n清空後 App 會跳回首次設置流程。建議先導出 JSON 備份。';
 
   @override
   String get settingsClearAllDataConfirm => '我已備份，確認清空';
@@ -4982,7 +4988,7 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
       '通用建議：精確鬧鐘被某些 ROM 靜默拒絕時，首次啟動 App 時系統會彈「是否允許」，請選「允許」。';
 
   @override
-  String get reminderHubDescription => '集中管理所有提醒：每天打卡、用藥時間、續方日期、心理評估。';
+  String get reminderHubDescription => '集中管理所有提醒：每天打卡、用藥時間、續方日期、自我測評。';
 
   @override
   String get reminderHubDailyTitle => '每日打卡提醒';
@@ -5007,7 +5013,7 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
 
   @override
   String reminderHubAssessmentDescEnabled(int days) {
-    return '每 $days 天提醒做心理評估（PHQ-9 ／ GAD-7）';
+    return '每 $days 天提醒做自我測評（PHQ-9 ／ GAD-7）';
   }
 
   @override
@@ -5078,7 +5084,7 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get reminderHubEnable => '啟用';
 
   @override
-  String get reminderHubAssessmentSubtitle => '每隔 N 天推送一次心理評估';
+  String get reminderHubAssessmentSubtitle => '每隔 N 天提醒一次自我測評';
 
   @override
   String get reminderHubInterval => '提醒間隔';
@@ -5533,7 +5539,7 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
 
   @override
   String assessmentReminderEnabled(int days) {
-    return '已開啟：每 $days 天提醒做心理評估';
+    return '已開啟：每 $days 天提醒做自我測評';
   }
 
   @override
@@ -5543,7 +5549,7 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
 
   @override
   String assessmentReminderSubtitleEnabled(int days) {
-    return '每 $days 天提醒我做一次心理評估';
+    return '每 $days 天提醒我做一次自我測評';
   }
 
   @override
@@ -5604,7 +5610,7 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get assessmentHistoryEmpty => '還沒有評估記錄';
 
   @override
-  String get assessmentHistoryEmptyHint => '完成一次心理評估後，記錄會顯示在這裡';
+  String get assessmentHistoryEmptyHint => '完成一次自我測評後，記錄會顯示在這裡';
 
   @override
   String get assessmentHistoryStartFirst => '開始第一次評估';
@@ -5662,10 +5668,10 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get assessmentSeverityUnknown => '未知';
 
   @override
-  String get assessmentScalePhq9 => 'PHQ-9 抑鬱篩查';
+  String get assessmentScalePhq9 => 'PHQ-9 情緒自測';
 
   @override
-  String get assessmentScaleGad7 => 'GAD-7 焦慮篩查';
+  String get assessmentScaleGad7 => 'GAD-7 情緒自測';
 
   @override
   String get setupConsentRequired => '請先完成法律文件閱讀與同意';
@@ -5812,7 +5818,7 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
 
   @override
   String reportHistoryItemPatient(Object name) {
-    return '患者：$name';
+    return '記錄人：$name';
   }
 
   @override
@@ -5899,7 +5905,7 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get trendLast6Months => '最近 6 個月';
 
   @override
-  String get trendAssessmentHistory => '心理評估歷史';
+  String get trendAssessmentHistory => '自我測評歷史';
 
   @override
   String get trendMoodHistory => '情緒日記歷史';
@@ -6002,7 +6008,7 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get trendNoAssessments => '還沒有評估記錄';
 
   @override
-  String get trendNoAssessmentsHint => '完成一次心理評估後，折線圖會自動出現在這裡';
+  String get trendNoAssessmentsHint => '完成一次自我測評後，折線圖會自動出現在這裡';
 
   @override
   String get trendNoMoodEntries => '還沒有情緒記錄';
@@ -6426,10 +6432,10 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get dayDetailTempMed => '臨時吃藥';
 
   @override
-  String get dayDetailPhq9 => 'PHQ-9 抑鬱篩查';
+  String get dayDetailPhq9 => 'PHQ-9 情緒自測';
 
   @override
-  String get dayDetailGad7 => 'GAD-7 焦慮篩查';
+  String get dayDetailGad7 => 'GAD-7 情緒自測';
 
   @override
   String get scaleHotlineCn => '全國 24 小時心理援助熱線';
@@ -6540,7 +6546,7 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get phq9Instruction => '過去兩週內，你有多經常被以下問題困擾？';
 
   @override
-  String get phq9ShortDescription => '過去兩週的抑鬱傾向篩查';
+  String get phq9ShortDescription => '過去兩週的情緒傾向自測';
 
   @override
   String get gad7Item0 => '感到緊張、焦慮或急切';
@@ -6591,7 +6597,7 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get gad7Instruction => '過去兩週內，你有多經常被以下問題困擾？';
 
   @override
-  String get gad7ShortDescription => '過去兩週的焦慮傾向篩查';
+  String get gad7ShortDescription => '過去兩週的情緒傾向自測';
 
   @override
   String get homeFabVent => '樹洞';
@@ -6655,7 +6661,7 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get homeMoreSheetTitle => '更多入口';
 
   @override
-  String get homeMoreMedication => '用藥管理';
+  String get homeMoreMedication => '用藥提醒';
 
   @override
   String homeMoreMedicationSub(int total, int done) {
@@ -6663,7 +6669,7 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   }
 
   @override
-  String get homeMoreAssessment => '心理評估';
+  String get homeMoreAssessment => '自我測評';
 
   @override
   String homeMoreAssessmentSub(int count) {
@@ -8301,14 +8307,14 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get settingsProfileTitle => '個人資料';
 
   @override
-  String get settingsProfileSubtitle => '健康檔案、醫療信息';
+  String get settingsProfileSubtitle => '個人檔案、記錄信息';
 
   @override
   String get todaySummaryMood => '心情';
 
   @override
   String get setupConsentMedicalDisclaimer =>
-      '我已閱讀並理解《醫學免責聲明》：本 App 不提供醫療建議、診斷或治療，不能替代專業醫療服務';
+      '我已閱讀並理解《免責聲明》：本 App 不提供醫療建議、診斷或治療，不能替代專業醫療服務';
 
   @override
   String get trackingCustomize => '自定義追蹤項';

@@ -179,7 +179,7 @@ void main() {
       expect(d.totalAssessments, 1);
       final a = d.events.first;
       expect(a.kind, DayEventKind.assessment);
-      expect(a.title, 'PHQ-9 抑郁筛查');
+      expect(a.title, 'PHQ-9 情绪自测');
       expect(a.assessmentTotal, 0);
     });
 
@@ -197,7 +197,7 @@ void main() {
         moodEntries: const [],
         medications: const [],
       );
-      expect(d.events.first.title, 'GAD-7 焦虑筛查');
+      expect(d.events.first.title, 'GAD-7 情绪自测');
     });
 
     test('medicationId 反查 name', () {
@@ -477,7 +477,7 @@ void main() {
       );
       final assessment =
           d.events.firstWhere((e) => e.kind == DayEventKind.assessment);
-      expect(assessment.title, 'PHQ-9 抑郁筛查');
+      expect(assessment.title, 'PHQ-9 情绪自测');
       expect(assessment.subtitle, contains('总分 8'));
       final moodEvent = d.events.firstWhere((e) => e.kind == DayEventKind.mood);
       expect(moodEvent.title, '😄 很好');

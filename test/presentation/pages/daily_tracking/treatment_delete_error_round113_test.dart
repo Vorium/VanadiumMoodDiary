@@ -130,7 +130,7 @@ void main() {
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 600));
     await tester.pump();
-    expect(find.textContaining('心理咨询'), findsOneWidget);
+    expect(find.textContaining('倾诉 / 咨询'), findsOneWidget);
 
     // 真实 swipe (endToStart) → Dismissible 真正进入 dismissed 状态
     await tester.drag(
@@ -148,7 +148,7 @@ void main() {
       reason: '修前: dismissed Dismissible 仍在树 → FlutterError',
     );
     expect(
-      find.textContaining('心理咨询'),
+      find.textContaining('倾诉 / 咨询'),
       findsOneWidget,
       reason: 'delete 失败后条目必须回到列表 (DB 里还在)',
     );
@@ -178,7 +178,7 @@ void main() {
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 600));
     await tester.pump();
-    expect(find.textContaining('心理咨询'), findsOneWidget);
+    expect(find.textContaining('倾诉 / 咨询'), findsOneWidget);
 
     // 直接调 onDismissed (绕过 swipe 的 dismiss 状态 — 全流程 swipe 会触发
     // BUG 7b 的 Dismissible FlutterError, 见文件头) → catch 链: swallowError
@@ -198,7 +198,7 @@ void main() {
       reason: 'delete 抛异常应显示错误 snackbar (commonDelete 模板)',
     );
     expect(
-      find.textContaining('心理咨询'),
+      find.textContaining('倾诉 / 咨询'),
       findsOneWidget,
       reason: '条目仍在 DB (fake watchAll 仍返回) → 非 dismissed 状态下重发射可见',
     );

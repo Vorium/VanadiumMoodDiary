@@ -114,8 +114,8 @@ void main() {
     await tester.pumpWidget(wrap(AssessmentMultiLineChart(entries: entries)));
     await tester.pumpAndSettle();
 
-    // 找 PHQ-9 chip (displayName = "PHQ-9 抑郁筛查" 走 phq9Scale.translations)
-    final phq9Chip = find.widgetWithText(FilterChip, 'PHQ-9 抑郁筛查');
+    // 找 PHQ-9 chip (displayName = "PHQ-9 情绪自测" 走 phq9Scale.translations)
+    final phq9Chip = find.widgetWithText(FilterChip, 'PHQ-9 情绪自测');
     expect(phq9Chip, findsOneWidget);
 
     // 第一次 tap: 当前已 selected (默认全 visible) → 取消选中

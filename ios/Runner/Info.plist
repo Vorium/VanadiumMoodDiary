@@ -13,7 +13,7 @@
 		修法: Info.plist 留单值 (英文), zh-Hans.lproj/InfoPlist.strings + zh-Hant.lproj/InfoPlist.strings 走多语
 	-->
 	<key>CFBundleDisplayName</key>
-	<string>ChronicCare</string>
+	<string>MoodDiary</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>

@@ -1,6 +1,7 @@
 {
   "@@locale": "zh_Hant",
   "appName": "MoodDiary 心情日記",
+  "appleHealthTileTooltip": "應用內資料，不上 Apple Health",
   "homeCheckIn": "我今天吃了藥",
   "homeCheckedIn": "今天已打卡 ✓",
   "homeStreak": "已堅持 {days} 天",
@@ -58,7 +59,7 @@
   "setupPrivacy2": "• 不會上傳到任何雲端服務器",
   "setupPrivacy3": "• 您可以隨時導出",
   "settingsMedication": "常吃藥",
-  "settingsHealthData": "健康數據",
+  "settingsHealthData": "我的數據",
   "settingsHealthDataMedSub": "{total} 種藥物 · 今日 {done}/{total} 已服",
   "@settingsHealthDataMedSub": {
     "description": "v1.1.0 round 11 (R115): 設置-健康數據-用藥副標題",
@@ -93,10 +94,10 @@
   "settingsImportSubtitle": "從 JSON 恢復（覆蓋現有數據）",
   "settingsReminders": "提醒",
   "settingsReminderCenter": "提醒中心",
-  "settingsReminderCenterSubtitle": "管理所有提醒：每日打卡、用藥時間、續方、心理評估",
+  "settingsReminderCenterSubtitle": "管理所有提醒：每日打卡、用藥時間、續方、自我測評",
   "settingsRefillManagement": "續方管理",
   "settingsRefillManagementSubtitle": "集中查看所有藥物的續方狀態",
-  "settingsAssessment": "心理評估",
+  "settingsAssessment": "自我測評",
   "settingsAssessmentHistory": "評估歷史",
   "settingsAssessmentHistorySubtitle": "查看所有 PHQ-9 ／ GAD-7 評估的折線圖與對比",
   "@settingsAboutVersion": {
@@ -136,7 +137,7 @@
   "settingsClearAllData": "清空所有數據",
   "settingsClearAllDataSubtitle": "刪除全部打卡 ／ 用藥 ／ 評估 ／ 樹洞 ／ 聯繫人（無法恢復）",
   "settingsClearAllDataDialogTitle": "確認清空所有數據？",
-  "settingsClearAllDataDialogBody": "以下數據將被永久刪除，無法恢復：\n• 打卡記錄\n• 用藥與服藥歷史\n• 心理評估結果\n• 情緒日記\n• 樹洞（文字+錄音）\n\n清空後 App 會跳回首次設置流程。建議先導出 JSON 備份。",
+  "settingsClearAllDataDialogBody": "以下數據將被永久刪除，無法恢復：\n• 打卡記錄\n• 用藥與服藥歷史\n• 自我測評結果\n• 情緒日記\n• 樹洞（文字+錄音）\n\n清空後 App 會跳回首次設置流程。建議先導出 JSON 備份。",
   "settingsClearAllDataConfirm": "我已備份，確認清空",
   "settingsClearAllDataSuccess": "已清空所有數據",
   "commonSave": "保存",
@@ -320,7 +321,7 @@
   "notificationStatusCardOemStepOthers1": "設置 → 應用 → MoodDiary 心情日記 → 通知 → 全部開啟",
   "notificationStatusCardOemStepOthers2": "設置 → 電池 → 後臺運行 → 改為「允許」",
   "notificationStatusCardOemGeneralTip": "通用建議：精確鬧鐘被某些 ROM 靜默拒絕時，首次啟動 App 時系統會彈「是否允許」，請選「允許」。",
-  "reminderHubDescription": "集中管理所有提醒：每天打卡、用藥時間、續方日期、心理評估。",
+  "reminderHubDescription": "集中管理所有提醒：每天打卡、用藥時間、續方日期、自我測評。",
   "reminderHubDailyTitle": "每日打卡提醒",
   "reminderHubDailyDesc": "每天 20:00 推送「記得打卡」，漏 1 次沒關係",
   "reminderHubDailyStatus": "已啟用 · 每天 20:00",
@@ -328,7 +329,7 @@
   "reminderHubStatusError": "出錯",
   "reminderHubRefillTitle": "續方提醒",
   "reminderHubAssessmentTitle": "週期評估提醒",
-  "reminderHubAssessmentDescEnabled": "每 {days} 天提醒做心理評估（PHQ-9 ／ GAD-7）",
+  "reminderHubAssessmentDescEnabled": "每 {days} 天提醒做自我測評（PHQ-9 ／ GAD-7）",
   "@reminderHubAssessmentDescEnabled": {
     "placeholders": {
       "days": {
@@ -418,7 +419,7 @@
   },
   "reminderHubManageRefill": "管理續方",
   "reminderHubEnable": "啟用",
-  "reminderHubAssessmentSubtitle": "每隔 N 天推送一次心理評估",
+  "reminderHubAssessmentSubtitle": "每隔 N 天提醒一次自我測評",
   "reminderHubInterval": "提醒間隔",
   "reminderHubEveryNDays": "每 {days} 天",
   "@reminderHubEveryNDays": {
@@ -704,7 +705,7 @@
   },
   "errorPageHint": "這個地址可能已經失效，或者鏈接有誤。",
   "errorPageBackHome": "返回首頁",
-  "assessmentReminderEnabled": "已開啟：每 {days} 天提醒做心理評估",
+  "assessmentReminderEnabled": "已開啟：每 {days} 天提醒做自我測評",
   "@assessmentReminderEnabled": {
     "placeholders": {
       "days": {
@@ -720,7 +721,7 @@
       }
     }
   },
-  "assessmentReminderSubtitleEnabled": "每 {days} 天提醒我做一次心理評估",
+  "assessmentReminderSubtitleEnabled": "每 {days} 天提醒我做一次自我測評",
   "@assessmentReminderSubtitleEnabled": {
     "placeholders": {
       "days": {
@@ -775,7 +776,7 @@
     }
   },
   "assessmentHistoryEmpty": "還沒有評估記錄",
-  "assessmentHistoryEmptyHint": "完成一次心理評估後，記錄會顯示在這裡",
+  "assessmentHistoryEmptyHint": "完成一次自我測評後，記錄會顯示在這裡",
   "assessmentHistoryStartFirst": "開始第一次評估",
   "assessmentHistoryTotalAssessments": "總評估",
   "assessmentHistoryTimes": "次",
@@ -810,8 +811,8 @@
   "assessmentSeverityModeratelySevere": "中重度",
   "assessmentSeveritySevere": "重度",
   "assessmentSeverityUnknown": "未知",
-  "assessmentScalePhq9": "PHQ-9 抑鬱篩查",
-  "assessmentScaleGad7": "GAD-7 焦慮篩查",
+  "assessmentScalePhq9": "PHQ-9 情緒自測",
+  "assessmentScaleGad7": "GAD-7 情緒自測",
   "setupConsentRequired": "請先完成法律文件閱讀與同意",
   "setupValidationNameRequired": "請輸入您的名字",
   "setupPresetTitle": "📋 選擇預置方案",
@@ -884,7 +885,7 @@
       }
     }
   },
-  "reportHistoryItemPatient": "患者：{name}",
+  "reportHistoryItemPatient": "記錄人：{name}",
   "@reportHistoryItemPatient": {
     "placeholders": {
       "name": {
@@ -970,7 +971,7 @@
   "trendTitle": "我的趨勢",
   "trendLast30Days": "最近 30 天",
   "trendLast6Months": "最近 6 個月",
-  "trendAssessmentHistory": "心理評估歷史",
+  "trendAssessmentHistory": "自我測評歷史",
   "trendMoodHistory": "情緒日記歷史",
   "trendViewList": "列表",
   "trendViewCalendar": "日曆",
@@ -1054,7 +1055,7 @@
     }
   },
   "trendNoAssessments": "還沒有評估記錄",
-  "trendNoAssessmentsHint": "完成一次心理評估後，折線圖會自動出現在這裡",
+  "trendNoAssessmentsHint": "完成一次自我測評後，折線圖會自動出現在這裡",
   "trendNoMoodEntries": "還沒有情緒記錄",
   "trendNoMoodEntriesHint": "在主頁點擊「記一下情緒」開始記錄",
   "trendCbtReratedChartTitle": "重評效果",
@@ -1301,8 +1302,8 @@
     }
   },
   "dayDetailTempMed": "臨時吃藥",
-  "dayDetailPhq9": "PHQ-9 抑鬱篩查",
-  "dayDetailGad7": "GAD-7 焦慮篩查",
+  "dayDetailPhq9": "PHQ-9 情緒自測",
+  "dayDetailGad7": "GAD-7 情緒自測",
   "scaleHotlineCn": "全國 24 小時心理援助熱線",
   "scaleHotlineCn2": "北京心理危機研究與干預中心",
   "scaleHotlineUs": "988 Suicide & Crisis Lifeline (US)",
@@ -1345,7 +1346,7 @@
   "phq9SeveritySummary3": "中重度抑鬱傾向",
   "phq9SeveritySummary4": "重度抑鬱傾向",
   "phq9Instruction": "過去兩週內，你有多經常被以下問題困擾？",
-  "phq9ShortDescription": "過去兩週的抑鬱傾向篩查",
+  "phq9ShortDescription": "過去兩週的情緒傾向自測",
   "gad7Item0": "感到緊張、焦慮或急切",
   "gad7Item1": "不能停止或控制擔憂",
   "gad7Item2": "對各種事情擔憂過多",
@@ -1362,7 +1363,7 @@
   "gad7SeveritySummary2": "中度焦慮傾向",
   "gad7SeveritySummary3": "重度焦慮傾向",
   "gad7Instruction": "過去兩週內，你有多經常被以下問題困擾？",
-  "gad7ShortDescription": "過去兩週的焦慮傾向篩查",
+  "gad7ShortDescription": "過去兩週的情緒傾向自測",
   "homeFabVent": "樹洞",
   "homeMoodHeroTitle": "今日心情",
   "homeMoodHeroRecord": "記錄心情",
@@ -1397,7 +1398,7 @@
   "homeMoreEntryTitle": "更多",
   "homeMoreEntrySubtitle": "用藥 · 量表 · 危機熱線",
   "homeMoreSheetTitle": "更多入口",
-  "homeMoreMedication": "用藥管理",
+  "homeMoreMedication": "用藥提醒",
   "homeMoreMedicationSub": "{total} 種藥物 · 今日 {done}/{total} 已服",
   "@homeMoreMedicationSub": {
     "description": "v1.1.0 round 11 (R115): BottomSheet 用藥管理副標題",
@@ -1406,7 +1407,7 @@
       "done": { "type": "int" }
     }
   },
-  "homeMoreAssessment": "心理評估",
+  "homeMoreAssessment": "自我測評",
   "homeMoreAssessmentSub": "{count} 個量表",
   "@homeMoreAssessmentSub": {
     "description": "v1.1.0 round 11 (R115): BottomSheet 心理評估副標題",
@@ -3003,7 +3004,7 @@
   "moodDeleted": "已刪除",
   "moodPeriodAfternoon": "下午",
   "settingsProfileTitle": "個人資料",
-  "settingsProfileSubtitle": "健康檔案、醫療信息",
+  "settingsProfileSubtitle": "個人檔案、記錄信息",
   "todaySummaryMood": "心情",
   "@todaySummaryStreakDays": {
     "description": "R103: 主頁摘要卡連續打卡天數 (placeholder {count} 是天數）",
@@ -3013,7 +3014,7 @@
       }
     }
   },
-  "setupConsentMedicalDisclaimer": "我已閱讀並理解《醫學免責聲明》：本 App 不提供醫療建議、診斷或治療，不能替代專業醫療服務",
+  "setupConsentMedicalDisclaimer": "我已閱讀並理解《免責聲明》：本 App 不提供醫療建議、診斷或治療，不能替代專業醫療服務",
   "trackingCustomize": "自定義追蹤項",
   "trackingUnknownItem": "未知項目",
   "trackingPin": "置頂",

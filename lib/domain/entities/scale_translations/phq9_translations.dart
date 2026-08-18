@@ -13,7 +13,7 @@
 
 import 'package:chroniccare/domain/entities/scale_translations/_scale_translations_interfaces.dart';
 
-/// PHQ-9 (Patient Health Questionnaire-9 抑郁筛查 9 题) 中文 fallback
+/// PHQ-9 (Patient Health Questionnaire-9 情绪自测 9 题) 中文 fallback
 ///
 /// R118 P2-7 阶段 1: 原 [StaticScaleTranslations] PHQ-9 段 73L
 ///   (4 const + 7 method) 1:1 抽到本 class, 主壳用 instance 委托 method
@@ -68,11 +68,11 @@ class Phq9Translations implements Phq9TranslationsInterface {
   // === 7 method (R122 P2-3: 加 @override, 满足 Phq9TranslationsInterface) ===
 
   @override
-  String phq9Name({String? override}) => override ?? 'PHQ-9 抑郁筛查';
+  String phq9Name({String? override}) => override ?? 'PHQ-9 情绪自测';
 
   @override
   String phq9ShortDescription({String? override}) =>
-      override ?? '过去两周的抑郁倾向筛查';
+      override ?? '过去两周的情绪倾向自测';
 
   @override
   String phq9Instruction({String? override}) =>

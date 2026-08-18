@@ -72,12 +72,12 @@ void main() {
 
     // EmptyState 显示 (R91 existing treatmentNoData / treatmentHint)
     expect(
-      find.text('暂无治疗记录'),
+      find.text('暂无照护记录'),
       findsOneWidget,
       reason: 'R91 treatmentNoData 文案应可见',
     );
     expect(
-      find.textContaining('治疗条目'),
+      find.textContaining('照护条目'),
       findsOneWidget,
       reason: 'R91 treatmentHint 副文案应可见',
     );
@@ -97,7 +97,7 @@ void main() {
 
     // 列表有 1 条 entry (R92 format: "category · description" + subtitle)
     expect(
-      find.textContaining('心理咨询'),
+      find.textContaining('倾诉 / 咨询'),
       findsOneWidget,
       reason: 'entry category (treatmentType) 透传显示',
     );
@@ -124,7 +124,7 @@ void main() {
 
     // AddTreatmentDialog 弹出 (4 字段 visible)
     expect(
-      find.text('添加治疗记录'),
+      find.text('添加照护记录'),
       findsOneWidget,
       reason: 'AddTreatmentDialog title 可见',
     );
@@ -139,7 +139,7 @@ void main() {
       reason: 'category field 可见',
     );
     expect(
-      find.text('医疗机构 / 医生'),
+      find.text('照护来源'),
       findsOneWidget,
       reason: 'provider field 可见',
     );

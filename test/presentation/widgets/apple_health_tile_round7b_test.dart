@@ -15,11 +15,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:chroniccare/core/theme/app_tokens.dart';
+import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/presentation/widgets/apple_health_tile.dart';
 
 void main() {
+  // R128e: tooltip 文案走 ARB (appleHealthTileTooltip), 测试加 delegates
   Widget wrap(Widget child, {bool dark = false}) => MaterialApp(
         theme: dark ? ThemeData.dark(useMaterial3: true) : null,
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
         home: Scaffold(body: Center(child: child)),
       );
 

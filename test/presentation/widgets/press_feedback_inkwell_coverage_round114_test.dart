@@ -67,7 +67,7 @@ void main() {
     });
 
     test('trend_calendar.dart: 日历 cell InkWell 包 PressFeedback', () async {
-      final src = await read('presentation/pages/trend/trend_calendar.dart');
+      final src = await read('features/trend/presentation/pages/trend/trend_calendar.dart');
       expect(
         RegExp(r'PressFeedback\(\s*child: InkWell\(').hasMatch(src),
         isTrue,
@@ -78,7 +78,7 @@ void main() {
         'worry_timeline_page.dart: FilledButton/OutlinedButton/TextButton 包 PressFeedback',
         () async {
       final src =
-          await read('presentation/pages/worry/worry_timeline_page.dart');
+          await read('features/worry/presentation/pages/worry/worry_timeline_page.dart');
       expect(
         RegExp(r'PressFeedback\(\s*child: (FilledButton|OutlinedButton|TextButton)\(')
             .hasMatch(src),
@@ -89,7 +89,7 @@ void main() {
     test('mood_hero_card.dart: FilledButton/TextButton 包 PressFeedback',
         () async {
       final src =
-          await read('presentation/pages/home/widgets/mood_hero_card.dart');
+          await read('features/home/presentation/pages/home/widgets/mood_hero_card.dart');
       expect(
         RegExp(r'PressFeedback\(\s*child: (FilledButton|TextButton)\(')
             .hasMatch(src),

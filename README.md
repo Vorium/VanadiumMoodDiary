@@ -1,4 +1,4 @@
-# ChronicCare (慢病管家) — Flutter
+# MoodDiary 心情日记 (ChronicCare) — Flutter
 
 > **项目版本**: 1.1.0+185 (`pubspec.yaml:6`)
 > **Flutter / Dart**: `>=3.41.0` / `>=3.6.0 <4.0.0` (`pubspec.yaml:8-10`)
@@ -9,10 +9,13 @@
 
 ## 一、项目定位
 
-**情绪日记 + 树洞倾诉优先** — ChronicCare (慢病管家) is a mood journal &
-vent-first self-care app for mental wellness, with medication tracking as support.
+**情绪日记 + 树洞倾诉优先** — MoodDiary 心情日记 is a mood journal &
+vent-first self-care app for emotional well-being.
 
-1.1.0 round 6d 起改为"情绪优先"。
+1.1.0 round 6d 起改为"情绪优先" (emotion-first)。**永久完全免费** (v1.0.0+147 定版), 0 内购 / 0 第三方追踪 / 0 云端。
+
+R128e (2026-08-18) 医疗声称降级: 从"慢病管理"定位改为个人情绪记录工具,
+删诊断解读 / 危机弹窗 / 临床严重度标签, iOS 类别 healthcare-fitness → lifestyle。
 
 ---
 

@@ -25,7 +25,7 @@ void main() {
       // 这是 R95+ 测试模式: 对 god class 的内部结构做白盒测试, 比 widget
       // pump 更快更稳, 防止误改 stagger 层数。
       final file = File(
-        'lib/presentation/pages/home/home_page_state.dart',
+        'lib/features/home/presentation/pages/home/home_page_state.dart',
       );
       homePageStateContent = await file.readAsString();
     });

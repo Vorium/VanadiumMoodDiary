@@ -27,11 +27,11 @@ void main() {
     const t = StaticScaleTranslations();
 
     test('phq9Name 返中文 fallback', () {
-      expect(t.phq9Name(), 'PHQ-9 抑郁筛查');
+      expect(t.phq9Name(), 'PHQ-9 情绪自测');
     });
 
     test('gad7Name 返中文 fallback', () {
-      expect(t.gad7Name(), 'GAD-7 焦虑筛查');
+      expect(t.gad7Name(), 'GAD-7 情绪自测');
     });
 
     test('phq9Name 接受 override 优先', () {
@@ -79,11 +79,11 @@ void main() {
     final l10n = AppLocalizationsZh();
 
     test('phq9Name zh 返中文', () {
-      expect(l10n.assessmentScalePhq9, 'PHQ-9 抑郁筛查');
+      expect(l10n.assessmentScalePhq9, 'PHQ-9 情绪自测');
     });
 
     test('gad7Name zh 返中文', () {
-      expect(l10n.assessmentScaleGad7, 'GAD-7 焦虑筛查');
+      expect(l10n.assessmentScaleGad7, 'GAD-7 情绪自测');
     });
 
     test('crisisHotlineLabel cn 返中文 hotline', () {
@@ -104,11 +104,11 @@ void main() {
     final l10n = AppLocalizationsEn();
 
     test('phq9Name en 返英文', () {
-      expect(l10n.assessmentScalePhq9, 'PHQ-9 Depression Screening');
+      expect(l10n.assessmentScalePhq9, 'PHQ-9 Mood Check');
     });
 
     test('gad7Name en 返英文', () {
-      expect(l10n.assessmentScaleGad7, 'GAD-7 Anxiety Screening');
+      expect(l10n.assessmentScaleGad7, 'GAD-7 Mood Check');
     });
 
     test('crisisHotlineLabel cn en 仍是英文 (源语言 en)', () {
@@ -181,23 +181,23 @@ void main() {
     test('phq9Scale const 默认 StaticScaleTranslations 中文 fallback', () {
       // 老 caller 兼容 — 21 case phq9_detect_crisis_round60_test 不破
       expect(phq9Scale.translations, isA<StaticScaleTranslations>());
-      expect(phq9Scale.displayName, 'PHQ-9 抑郁筛查');
+      expect(phq9Scale.displayName, 'PHQ-9 情绪自测');
     });
 
     test('gad7Scale const 默认 StaticScaleTranslations 中文 fallback', () {
       // 老 caller 兼容 — 13 case gad7_round16_test 不破
       expect(gad7Scale.translations, isA<StaticScaleTranslations>());
-      expect(gad7Scale.displayName, 'GAD-7 焦虑筛查');
+      expect(gad7Scale.displayName, 'GAD-7 情绪自测');
     });
 
     test('Phq9Scale 注入自定义 translations → displayName 走注入 (AR-17 本地替身)', () {
       final scale = Phq9Scale(translations: _EnNameTranslations());
-      expect(scale.displayName, 'PHQ-9 Depression Screening');
+      expect(scale.displayName, 'PHQ-9 Mood Check');
     });
 
     test('Gad7Scale 注入自定义 translations → displayName 走注入 (AR-17 本地替身)', () {
       final scale = Gad7Scale(translations: _EnNameTranslations());
-      expect(scale.displayName, 'GAD-7 Anxiety Screening');
+      expect(scale.displayName, 'GAD-7 Mood Check');
     });
   });
 }
@@ -209,8 +209,8 @@ void main() {
 class _EnNameTranslations extends StaticScaleTranslations {
   @override
   String phq9Name({String? override}) =>
-      override ?? 'PHQ-9 Depression Screening';
+      override ?? 'PHQ-9 Mood Check';
 
   @override
-  String gad7Name({String? override}) => override ?? 'GAD-7 Anxiety Screening';
+  String gad7Name({String? override}) => override ?? 'GAD-7 Mood Check';
 }

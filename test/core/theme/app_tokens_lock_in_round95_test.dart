@@ -127,12 +127,12 @@ void main() {
       // 引用分散在主壳 + 拆出 widget。检查整个 legal_page 模块 (主壳 + 5
       // widgets/legal_*.dart), 跟 R121 vent_list_page 拆 widget 模式一致。
       final module = <String>[
-        'lib/presentation/pages/settings/legal_page.dart',
-        'lib/presentation/pages/settings/widgets/legal_section_title.dart',
-        'lib/presentation/pages/settings/widgets/legal_doc_tile.dart',
-        'lib/presentation/pages/settings/widgets/legal_consent_tile.dart',
-        'lib/presentation/pages/settings/widgets/legal_withdraw_option.dart',
-        'lib/presentation/pages/settings/widgets/legal_withdraw_choice.dart',
+        'lib/features/settings/presentation/pages/settings/legal_page.dart',
+        'lib/features/settings/presentation/pages/settings/widgets/legal_section_title.dart',
+        'lib/features/settings/presentation/pages/settings/widgets/legal_doc_tile.dart',
+        'lib/features/settings/presentation/pages/settings/widgets/legal_consent_tile.dart',
+        'lib/features/settings/presentation/pages/settings/widgets/legal_withdraw_option.dart',
+        'lib/features/settings/presentation/pages/settings/widgets/legal_withdraw_choice.dart',
       ];
       final moduleContent =
           module.map((p) => File(p).readAsStringSync()).join('\n');
@@ -150,7 +150,7 @@ void main() {
     });
 
     test('setup_step_welcome: 用 textStyleCaption 集中器', () {
-      final file = File('lib/presentation/pages/setup/setup_step_welcome.dart');
+      final file = File('lib/features/setup/presentation/pages/setup/setup_step_welcome.dart');
       expect(file.existsSync(), true);
       final content = file.readAsStringSync();
       expect(
@@ -173,7 +173,7 @@ void main() {
 
     test('trend_day_detail_card: literal 6/2 改 spacingChipGap/spacingXxxs', () {
       final file = File(
-        'lib/presentation/pages/trend/widgets/trend_day_detail_card.dart',
+        'lib/features/trend/presentation/pages/trend/widgets/trend_day_detail_card.dart',
       );
       expect(file.existsSync(), true);
       final content = file.readAsStringSync();

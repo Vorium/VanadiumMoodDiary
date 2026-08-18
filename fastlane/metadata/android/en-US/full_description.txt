@@ -5,7 +5,7 @@ Not a medical tool. It cannot replace a doctor's diagnosis or treatment. But it 
 KEY FEATURES
 
 • Mood journal
-Rate today across 4 dimensions (mood, energy, sleep, anxiety). Attach voice notes, influence factors, and optional CBT thought records to untangle your thoughts.
+Rate today across 4 dimensions (mood, energy, sleep, stress). Attach voice notes, influence factors, and optional CBT thought records to untangle your thoughts.
 
 • Vent space
 A completely private corner to write what's on your mind. Encrypted and stored only on your device. Voice recording supported.

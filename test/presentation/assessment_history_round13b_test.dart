@@ -107,7 +107,7 @@ void main() {
     expect(find.text('最近 GAD-7'), findsOneWidget);
 
     // 折线图（1 张图 PHQ-9，2 条记录也用 PHQ-9 名字在历史里 = 3 次）
-    expect(find.text('PHQ-9 抑郁筛查'), findsNWidgets(3));
+    expect(find.text('PHQ-9 情绪自测'), findsNWidgets(3));
     expect(find.text('2 次评估'), findsOneWidget);
 
     // 完整记录
@@ -134,8 +134,8 @@ void main() {
     await tester.pumpAndSettle(const Duration(seconds: 2));
 
     // 2 张图标题（每个量表的 chart + history list 项）
-    expect(find.text('PHQ-9 抑郁筛查'), findsNWidgets(3)); // chart + 2 history rows
-    expect(find.text('GAD-7 焦虑筛查'), findsNWidgets(3)); // chart + 2 history rows
+    expect(find.text('PHQ-9 情绪自测'), findsNWidgets(3)); // chart + 2 history rows
+    expect(find.text('GAD-7 情绪自测'), findsNWidgets(3)); // chart + 2 history rows
   });
 
   testWidgets('上次对比：diff 徽章', (tester) async {
@@ -154,36 +154,39 @@ void main() {
     expect(find.byIcon(Icons.arrow_upward), findsOneWidget);
   });
 
-  testWidgets('严重度：高分显示"重度" + 红色', (tester) async {
+  // R128e 医疗声称降级: 严重度标签 (重度/轻度等) 不再显示
+  testWidgets('严重度标签不再显示 (R128e 医疗声称降级): 高分 25 无"重度"', (tester) async {
     _setBigView(tester);
     await tester.pumpWidget(
       _wrap(
         records: [
-          _phq9(total: 25, at: DateTime(2026, 7, 1)), // 重度（> 75% × 27 = 20.25）
+          _phq9(total: 25, at: DateTime(2026, 7, 1)),
         ],
       ),
     );
     await tester.pumpAndSettle(const Duration(seconds: 2));
 
-    expect(find.text('重度'), findsWidgets);
+    expect(find.text('重度'), findsNothing);
   });
 
-  testWidgets('严重度：低分显示"几乎没有" (R75 临床精度, PHQ-9 临床 minimal)', (tester) async {
+  // R128e 医疗声称降级: 严重度标签不再显示
+  testWidgets('严重度标签不再显示: 低分 3 无"几乎没有"', (tester) async {
     _setBigView(tester);
     await tester.pumpWidget(
       _wrap(
         records: [
-          _phq9(total: 3, at: DateTime(2026, 7, 1)), // 几乎没有（< 25% × 27 = 6.75）
+          _phq9(total: 3, at: DateTime(2026, 7, 1)),
         ],
       ),
     );
     await tester.pumpAndSettle(const Duration(seconds: 2));
 
-    expect(find.text('几乎没有'), findsWidgets);
+    expect(find.text('几乎没有'), findsNothing);
   });
 
   // v0.14 fix (Bug C): 严重度按临床标准，不是百分比
-  testWidgets('严重度：PHQ-9 score=5 → "轻度"（百分比会错判为"几乎没有"）', (tester) async {
+  // R128e 医疗声称降级: 严重度标签不再显示
+  testWidgets('严重度标签不再显示: PHQ-9 score=5 无"轻度"', (tester) async {
     _setBigView(tester);
     await tester.pumpWidget(
       _wrap(
@@ -194,11 +197,11 @@ void main() {
     );
     await tester.pumpAndSettle(const Duration(seconds: 2));
 
-    // PHQ-9 临床: 0-4=几乎没有, 5-9=轻度
-    expect(find.text('轻度'), findsWidgets);
+    expect(find.text('轻度'), findsNothing);
   });
 
-  testWidgets('严重度：PHQ-9 score=20 → "重度"（百分比会错判为"中度"）', (tester) async {
+  // R128e 医疗声称降级: 严重度标签不再显示
+  testWidgets('严重度标签不再显示: PHQ-9 score=20 无"重度"', (tester) async {
     _setBigView(tester);
     await tester.pumpWidget(
       _wrap(
@@ -209,11 +212,11 @@ void main() {
     );
     await tester.pumpAndSettle(const Duration(seconds: 2));
 
-    // PHQ-9 临床: 20+ = 重度
-    expect(find.text('重度'), findsWidgets);
+    expect(find.text('重度'), findsNothing);
   });
 
-  testWidgets('严重度：GAD-7 score=5 → "轻度"（百分比 23.8% 会错判为"几乎没有"）', (tester) async {
+  // R128e 医疗声称降级: 严重度标签不再显示
+  testWidgets('严重度标签不再显示: GAD-7 score=5 无"轻度"', (tester) async {
     _setBigView(tester);
     await tester.pumpWidget(
       _wrap(
@@ -224,11 +227,11 @@ void main() {
     );
     await tester.pumpAndSettle(const Duration(seconds: 2));
 
-    // GAD-7 临床: 5-9 = 轻度
-    expect(find.text('轻度'), findsWidgets);
+    expect(find.text('轻度'), findsNothing);
   });
 
-  testWidgets('严重度：GAD-7 score=15 → "重度"（百分比 71.4% 会错判为"中度"）', (tester) async {
+  // R128e 医疗声称降级: 严重度标签不再显示
+  testWidgets('严重度标签不再显示: GAD-7 score=15 无"重度"', (tester) async {
     _setBigView(tester);
     await tester.pumpWidget(
       _wrap(
@@ -239,7 +242,6 @@ void main() {
     );
     await tester.pumpAndSettle(const Duration(seconds: 2));
 
-    // GAD-7 临床: 15+ = 重度
-    expect(find.text('重度'), findsWidgets);
+    expect(find.text('重度'), findsNothing);
   });
 }

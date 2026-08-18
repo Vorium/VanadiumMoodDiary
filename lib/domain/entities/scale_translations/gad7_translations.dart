@@ -9,7 +9,7 @@
 import 'package:chroniccare/domain/entities/scale_translations/phq9_translations.dart';
 import 'package:chroniccare/domain/entities/scale_translations/_scale_translations_interfaces.dart';
 
-/// GAD-7 (Generalized Anxiety Disorder-7 焦虑筛查 7 题) 中文 fallback
+/// GAD-7 (Generalized Anxiety Disorder-7 情绪自测 7 题) 中文 fallback
 ///
 /// R118 P2-7 阶段 2: 原 [StaticScaleTranslations] GAD-7 段 60L
 ///   (3 const + 7 method, gad7Option 委托 phq9Option 共享 4 档频率选项)
@@ -50,11 +50,11 @@ class Gad7Translations implements Gad7TranslationsInterface {
   // === 7 method (主壳委托调用, 不带 @override) ===
 
   @override
-  String gad7Name({String? override}) => override ?? 'GAD-7 焦虑筛查';
+  String gad7Name({String? override}) => override ?? 'GAD-7 情绪自测';
 
   @override
   String gad7ShortDescription({String? override}) =>
-      override ?? '过去两周的焦虑倾向筛查';
+      override ?? '过去两周的情绪倾向自测';
 
   @override
   String gad7Instruction({String? override}) =>

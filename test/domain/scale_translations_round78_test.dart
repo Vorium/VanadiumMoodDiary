@@ -62,7 +62,7 @@ void main() {
 
     test('phq9Instruction + phq9ShortDescription 返中文', () {
       expect(t.phq9Instruction(), '过去两周内，你有多经常被以下问题困扰？');
-      expect(t.phq9ShortDescription(), '过去两周的抑郁倾向筛查');
+      expect(t.phq9ShortDescription(), '过去两周的情绪倾向自测');
     });
 
     test('gad7Item 7 题全部返中文', () {
@@ -93,7 +93,7 @@ void main() {
 
     test('gad7Instruction + gad7ShortDescription 返中文', () {
       expect(t.gad7Instruction(), '过去两周内，你有多经常被以下问题困扰？');
-      expect(t.gad7ShortDescription(), '过去两周的焦虑倾向筛查');
+      expect(t.gad7ShortDescription(), '过去两周的情绪倾向自测');
     });
 
     test('越界 index 返空字符串 (跟 R77 hotline 越界行为一致)', () {
@@ -150,7 +150,7 @@ void main() {
     test('phq9ShortDescription en 返英文', () {
       expect(
         enL10n.phq9ShortDescription,
-        'Depression screening over the last 2 weeks',
+        'Mood check over the last 2 weeks',
       );
     });
 
@@ -241,7 +241,7 @@ void main() {
 
     test('Phq9Scale shortDescription + instruction 走 translations', () {
       const scale = phq9Scale;
-      expect(scale.shortDescription, '过去两周的抑郁倾向筛查');
+      expect(scale.shortDescription, '过去两周的情绪倾向自测');
       expect(scale.instruction, '过去两周内，你有多经常被以下问题困扰？');
     });
   });

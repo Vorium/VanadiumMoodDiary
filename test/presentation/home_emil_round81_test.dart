@@ -75,13 +75,13 @@ void main() {
       await _pump(
         tester,
         SectionHeader(
-          title: '心理评估',
+          title: '自我测评',
           chip: '本周',
           leading: const Icon(Icons.psychology_outlined),
           action: TextButton(onPressed: () {}, child: const Text('设置')),
         ),
       );
-      expect(find.text('心理评估'), findsOneWidget);
+      expect(find.text('自我测评'), findsOneWidget);
       expect(find.text('本周'), findsOneWidget);
       expect(find.byIcon(Icons.psychology_outlined), findsOneWidget);
       expect(find.text('设置'), findsOneWidget);

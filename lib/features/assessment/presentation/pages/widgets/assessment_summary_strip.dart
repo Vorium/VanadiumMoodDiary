@@ -40,8 +40,8 @@ class AssessmentSummaryStrip extends StatelessWidget {
               child: _Stat(
                 label: l10n.assessmentHistoryLatestPhq9,
                 value: latestPhq9 == null ? '—' : '${latestPhq9.total}',
-                // R128e 医疗声称降级: sub 不再显示"轻度/中度/重度"
-                // 临床严重度, 改显示最近一次日期 (中性信息)
+                // R128e 医疗声称降级: sub 不再显示"轻度／中度／重度"
+                // 临床严重度，改显示最近一次日期（中性信息）
                 sub: latestPhq9 == null
                     ? l10n.assessmentHistoryNotDone
                     : _formatDate(latestPhq9.timestamp),

@@ -1,6 +1,7 @@
 {
   "@@locale": "en",
   "appName": "MoodDiary",
+  "appleHealthTileTooltip": "On-device data — not synced to Apple Health",
   "homeCheckIn": "I took my meds today",
   "homeCheckedIn": "Checked in today ✓",
   "homeStreak": "{days}-day streak",
@@ -27,7 +28,7 @@
   "setupPrivacy2": "• Never uploaded to any server",
   "setupPrivacy3": "• Exportable anytime",
   "settingsMedication": "Medications",
-  "settingsHealthData": "Health data",
+  "settingsHealthData": "My data",
   "settingsHealthDataMedSub": "{total} meds · {done}/{total} taken today",
   "@settingsHealthDataMedSub": {
     "description": "v1.1.0 round 11 (R115): settings-health-data-medication subtitle",
@@ -65,8 +66,8 @@
   "settingsReminderCenterSubtitle": "Manage all reminders: daily check-in, medication times, refills, assessment",
   "settingsRefillManagement": "Refill Management",
   "settingsRefillManagementSubtitle": "View refill status for all medications",
-  "settingsAssessment": "Assessment",
-  "settingsAssessmentHistory": "Assessment History",
+  "settingsAssessment": "Self Check-ins",
+  "settingsAssessmentHistory": "Check-in History",
   "settingsAssessmentHistorySubtitle": "View line charts and comparisons for all PHQ-9 / GAD-7 assessments",
   "@settingsAboutVersion": {
     "description": "R99 (BUG-2): about section version line, version injected from kPubspecVersion (no longer hardcoded)",
@@ -286,7 +287,7 @@
   "reminderHubStatusError": "Error",
   "reminderHubRefillTitle": "Refill Reminder",
   "reminderHubAssessmentTitle": "Periodic Assessment Reminder",
-  "reminderHubAssessmentDescEnabled": "Remind every {days} days to take assessment (PHQ-9 / GAD-7)",
+  "reminderHubAssessmentDescEnabled": "Remind every {days} days to take a self check-in (PHQ-9 / GAD-7)",
   "@reminderHubAssessmentDescEnabled": {
     "placeholders": {
       "days": {
@@ -376,7 +377,7 @@
   },
   "reminderHubManageRefill": "Manage refills",
   "reminderHubEnable": "Enable",
-  "reminderHubAssessmentSubtitle": "Get a psychological assessment reminder every N days",
+  "reminderHubAssessmentSubtitle": "Get a self check-in reminder every N days",
   "reminderHubInterval": "Reminder interval",
   "reminderHubEveryNDays": "Every {days} days",
   "@reminderHubEveryNDays": {
@@ -768,8 +769,8 @@
   "assessmentSeverityModeratelySevere": "Moderately Severe",
   "assessmentSeveritySevere": "Severe",
   "assessmentSeverityUnknown": "Unknown",
-  "assessmentScalePhq9": "PHQ-9 Depression Screening",
-  "assessmentScaleGad7": "GAD-7 Anxiety Screening",
+  "assessmentScalePhq9": "PHQ-9 Mood Check",
+  "assessmentScaleGad7": "GAD-7 Mood Check",
   "setupConsentRequired": "Please read and agree to the legal documents first",
   "setupValidationNameRequired": "Please enter your name",
   "setupPresetTitle": "📋 Choose a Preset",
@@ -842,7 +843,7 @@
       }
     }
   },
-  "reportHistoryItemPatient": "Patient: {name}",
+  "reportHistoryItemPatient": "Recorded by: {name}",
   "@reportHistoryItemPatient": {
     "placeholders": {
       "name": {
@@ -1259,8 +1260,8 @@
     }
   },
   "dayDetailTempMed": "Temp dose",
-  "dayDetailPhq9": "PHQ-9 Depression Screening",
-  "dayDetailGad7": "GAD-7 Anxiety Screening",
+  "dayDetailPhq9": "PHQ-9 Mood Check",
+  "dayDetailGad7": "GAD-7 Mood Check",
   "scaleHotlineCn": "National 24h Psychological Aid Hotline",
   "scaleHotlineCn2": "Beijing Suicide Research & Prevention Center",
   "scaleHotlineUs": "988 Suicide & Crisis Lifeline (US)",
@@ -1303,7 +1304,7 @@
   "phq9SeveritySummary3": "Moderately severe depression",
   "phq9SeveritySummary4": "Severe depression",
   "phq9Instruction": "Over the last 2 weeks, how often have you been bothered by the following problems?",
-  "phq9ShortDescription": "Depression screening over the last 2 weeks",
+  "phq9ShortDescription": "Mood check over the last 2 weeks",
   "gad7Item0": "Feeling nervous, anxious or on edge",
   "gad7Item1": "Not being able to stop or control worrying",
   "gad7Item2": "Worrying too much about different things",
@@ -1320,7 +1321,7 @@
   "gad7SeveritySummary2": "Moderate anxiety",
   "gad7SeveritySummary3": "Severe anxiety",
   "gad7Instruction": "Over the last 2 weeks, how often have you been bothered by the following problems?",
-  "gad7ShortDescription": "Anxiety screening over the last 2 weeks",
+  "gad7ShortDescription": "Mood check over the last 2 weeks",
   "homeFabVent": "Mood vent",
   "homeMoodHeroTitle": "Today's Mood",
   "homeMoodHeroRecord": "Log mood",
@@ -1355,7 +1356,7 @@
   "homeMoreEntryTitle": "More",
   "homeMoreEntrySubtitle": "Meds · Scales · Crisis hotline",
   "homeMoreSheetTitle": "More entries",
-  "homeMoreMedication": "Medication",
+  "homeMoreMedication": "Med Reminders",
   "homeMoreMedicationSub": "{total} meds · {done}/{total} taken today",
   "@homeMoreMedicationSub": {
     "description": "v1.1.0 round 11 (R115): BottomSheet medication subtitle",
@@ -1364,7 +1365,7 @@
       "done": { "type": "int" }
     }
   },
-  "homeMoreAssessment": "Assessment",
+  "homeMoreAssessment": "Self Check-ins",
   "homeMoreAssessmentSub": "{count} scales",
   "@homeMoreAssessmentSub": {
     "description": "v1.1.0 round 11 (R115): BottomSheet assessment subtitle",
@@ -2961,7 +2962,7 @@
   "moodDeleted": "Deleted",
   "moodPeriodAfternoon": "Afternoon",
   "settingsProfileTitle": "Profile",
-  "settingsProfileSubtitle": "Health records, medical info",
+  "settingsProfileSubtitle": "Personal profile & records",
   "todaySummaryMood": "Mood",
   "@todaySummaryStreakDays": {
     "description": "R103: Today summary card streak days (placeholder {count} is day count)",

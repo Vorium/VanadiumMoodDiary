@@ -105,6 +105,12 @@ abstract class AppLocalizations {
   /// **'MoodDiary 心情日记'**
   String get appName;
 
+  /// No description provided for @appleHealthTileTooltip.
+  ///
+  /// In zh, this message translates to:
+  /// **'应用内数据，不上 Apple Health'**
+  String get appleHealthTileTooltip;
+
   /// No description provided for @homeCheckIn.
   ///
   /// In zh, this message translates to:
@@ -264,7 +270,7 @@ abstract class AppLocalizations {
   /// No description provided for @settingsHealthData.
   ///
   /// In zh, this message translates to:
-  /// **'健康数据'**
+  /// **'我的数据'**
   String get settingsHealthData;
 
   /// v1.1.0 round 11 (R115): 设置-健康数据-用药副标题
@@ -396,7 +402,7 @@ abstract class AppLocalizations {
   /// No description provided for @settingsReminderCenterSubtitle.
   ///
   /// In zh, this message translates to:
-  /// **'管理所有提醒：每日打卡、用药时间、续方、心理评估'**
+  /// **'管理所有提醒：每日打卡、用药时间、续方、自我测评'**
   String get settingsReminderCenterSubtitle;
 
   /// No description provided for @settingsRefillManagement.
@@ -414,7 +420,7 @@ abstract class AppLocalizations {
   /// No description provided for @settingsAssessment.
   ///
   /// In zh, this message translates to:
-  /// **'心理评估'**
+  /// **'自我测评'**
   String get settingsAssessment;
 
   /// No description provided for @settingsAssessmentHistory.
@@ -558,7 +564,7 @@ abstract class AppLocalizations {
   /// No description provided for @settingsClearAllDataDialogBody.
   ///
   /// In zh, this message translates to:
-  /// **'以下数据将被永久删除，无法恢复：\n• 打卡记录\n• 用药与服药历史\n• 心理评估结果\n• 情绪日记\n• 树洞（文字+录音）\n\n清空后 App 会跳回首次设置流程。建议先导出 JSON 备份。'**
+  /// **'以下数据将被永久删除，无法恢复：\n• 打卡记录\n• 用药与服药历史\n• 自我测评结果\n• 情绪日记\n• 树洞（文字+录音）\n\n清空后 App 会跳回首次设置流程。建议先导出 JSON 备份。'**
   String get settingsClearAllDataDialogBody;
 
   /// No description provided for @settingsClearAllDataConfirm.
@@ -1152,7 +1158,7 @@ abstract class AppLocalizations {
   /// No description provided for @reminderHubDescription.
   ///
   /// In zh, this message translates to:
-  /// **'集中管理所有提醒：每天打卡、用药时间、续方日期、心理评估。'**
+  /// **'集中管理所有提醒：每天打卡、用药时间、续方日期、自我测评。'**
   String get reminderHubDescription;
 
   /// No description provided for @reminderHubDailyTitle.
@@ -1200,7 +1206,7 @@ abstract class AppLocalizations {
   /// No description provided for @reminderHubAssessmentDescEnabled.
   ///
   /// In zh, this message translates to:
-  /// **'每 {days} 天提醒做心理评估（PHQ-9 ／ GAD-7）'**
+  /// **'每 {days} 天提醒做自我测评（PHQ-9 ／ GAD-7）'**
   String reminderHubAssessmentDescEnabled(int days);
 
   /// No description provided for @reminderHubAssessmentDescDisabled.
@@ -1308,7 +1314,7 @@ abstract class AppLocalizations {
   /// No description provided for @reminderHubAssessmentSubtitle.
   ///
   /// In zh, this message translates to:
-  /// **'每隔 N 天推送一次心理评估'**
+  /// **'每隔 N 天提醒一次自我测评'**
   String get reminderHubAssessmentSubtitle;
 
   /// No description provided for @reminderHubInterval.
@@ -2119,7 +2125,7 @@ abstract class AppLocalizations {
   /// No description provided for @assessmentReminderEnabled.
   ///
   /// In zh, this message translates to:
-  /// **'已开启：每 {days} 天提醒做心理评估'**
+  /// **'已开启：每 {days} 天提醒做自我测评'**
   String assessmentReminderEnabled(int days);
 
   /// No description provided for @assessmentReminderChanged.
@@ -2131,7 +2137,7 @@ abstract class AppLocalizations {
   /// No description provided for @assessmentReminderSubtitleEnabled.
   ///
   /// In zh, this message translates to:
-  /// **'每 {days} 天提醒我做一次心理评估'**
+  /// **'每 {days} 天提醒我做一次自我测评'**
   String assessmentReminderSubtitleEnabled(int days);
 
   /// No description provided for @assessmentReminderHelpText.
@@ -2233,7 +2239,7 @@ abstract class AppLocalizations {
   /// No description provided for @assessmentHistoryEmptyHint.
   ///
   /// In zh, this message translates to:
-  /// **'完成一次心理评估后，记录会显示在这里'**
+  /// **'完成一次自我测评后，记录会显示在这里'**
   String get assessmentHistoryEmptyHint;
 
   /// No description provided for @assessmentHistoryStartFirst.
@@ -2341,13 +2347,13 @@ abstract class AppLocalizations {
   /// No description provided for @assessmentScalePhq9.
   ///
   /// In zh, this message translates to:
-  /// **'PHQ-9 抑郁筛查'**
+  /// **'PHQ-9 情绪自测'**
   String get assessmentScalePhq9;
 
   /// No description provided for @assessmentScaleGad7.
   ///
   /// In zh, this message translates to:
-  /// **'GAD-7 焦虑筛查'**
+  /// **'GAD-7 情绪自测'**
   String get assessmentScaleGad7;
 
   /// No description provided for @setupConsentRequired.
@@ -2617,7 +2623,7 @@ abstract class AppLocalizations {
   /// No description provided for @reportHistoryItemPatient.
   ///
   /// In zh, this message translates to:
-  /// **'患者：{name}'**
+  /// **'记录人：{name}'**
   String reportHistoryItemPatient(Object name);
 
   /// No description provided for @reportHistoryItemNotSet.
@@ -2761,7 +2767,7 @@ abstract class AppLocalizations {
   /// No description provided for @trendAssessmentHistory.
   ///
   /// In zh, this message translates to:
-  /// **'心理评估历史'**
+  /// **'自我测评历史'**
   String get trendAssessmentHistory;
 
   /// No description provided for @trendMoodHistory.
@@ -2941,7 +2947,7 @@ abstract class AppLocalizations {
   /// No description provided for @trendNoAssessmentsHint.
   ///
   /// In zh, this message translates to:
-  /// **'完成一次心理评估后，折线图会自动出现在这里'**
+  /// **'完成一次自我测评后，折线图会自动出现在这里'**
   String get trendNoAssessmentsHint;
 
   /// No description provided for @trendNoMoodEntries.
@@ -3608,13 +3614,13 @@ abstract class AppLocalizations {
   /// No description provided for @presetMedComboSsriBedtimeTitle.
   ///
   /// In zh, this message translates to:
-  /// **'联合 · 早抗抑郁 + 晚助眠'**
+  /// **'联合 · 早晚分时'**
   String get presetMedComboSsriBedtimeTitle;
 
   /// No description provided for @presetMedComboSsriBedtimeDesc.
   ///
   /// In zh, this message translates to:
-  /// **'2 种药：早 8 点 SSRI + 晚 21 点助眠'**
+  /// **'2 种药：早 8 点一种 + 晚 21 点一种'**
   String get presetMedComboSsriBedtimeDesc;
 
   /// No description provided for @presetMedComboAntipsychoticFullTitle.
@@ -3632,13 +3638,13 @@ abstract class AppLocalizations {
   /// No description provided for @presetMedSsriName.
   ///
   /// In zh, this message translates to:
-  /// **'SSRI 类抗抑郁药'**
+  /// **'SSRI ／ SNRI 类'**
   String get presetMedSsriName;
 
   /// No description provided for @presetMedSsriHint.
   ///
   /// In zh, this message translates to:
-  /// **'常见 SSRI ／ SNRI 类抗抑郁药（具体药名以医生处方为准）'**
+  /// **'常见 SSRI ／ SNRI 类（具体药名以医生处方为准）'**
   String get presetMedSsriHint;
 
   /// No description provided for @presetMedMoodStabilizerName.
@@ -3716,13 +3722,13 @@ abstract class AppLocalizations {
   /// No description provided for @dayDetailPhq9.
   ///
   /// In zh, this message translates to:
-  /// **'PHQ-9 抑郁筛查'**
+  /// **'PHQ-9 情绪自测'**
   String get dayDetailPhq9;
 
   /// No description provided for @dayDetailGad7.
   ///
   /// In zh, this message translates to:
-  /// **'GAD-7 焦虑筛查'**
+  /// **'GAD-7 情绪自测'**
   String get dayDetailGad7;
 
   /// No description provided for @scaleHotlineCn.
@@ -3944,7 +3950,7 @@ abstract class AppLocalizations {
   /// No description provided for @phq9ShortDescription.
   ///
   /// In zh, this message translates to:
-  /// **'过去两周的抑郁倾向筛查'**
+  /// **'过去两周的情绪倾向自测'**
   String get phq9ShortDescription;
 
   /// No description provided for @gad7Item0.
@@ -4046,7 +4052,7 @@ abstract class AppLocalizations {
   /// No description provided for @gad7ShortDescription.
   ///
   /// In zh, this message translates to:
-  /// **'过去两周的焦虑倾向筛查'**
+  /// **'过去两周的情绪倾向自测'**
   String get gad7ShortDescription;
 
   /// No description provided for @homeFabVent.
@@ -4166,7 +4172,7 @@ abstract class AppLocalizations {
   /// No description provided for @homeMoreMedication.
   ///
   /// In zh, this message translates to:
-  /// **'用药管理'**
+  /// **'用药提醒'**
   String get homeMoreMedication;
 
   /// v1.1.0 round 11 (R115): BottomSheet 用药管理副标题
@@ -4178,7 +4184,7 @@ abstract class AppLocalizations {
   /// No description provided for @homeMoreAssessment.
   ///
   /// In zh, this message translates to:
-  /// **'心理评估'**
+  /// **'自我测评'**
   String get homeMoreAssessment;
 
   /// v1.1.0 round 11 (R115): BottomSheet 心理评估副标题
@@ -7281,7 +7287,7 @@ abstract class AppLocalizations {
   /// No description provided for @settingsProfileSubtitle.
   ///
   /// In zh, this message translates to:
-  /// **'健康档案、医疗信息'**
+  /// **'个人档案、记录信息'**
   String get settingsProfileSubtitle;
 
   /// No description provided for @todaySummaryMood.
@@ -7293,7 +7299,7 @@ abstract class AppLocalizations {
   /// No description provided for @setupConsentMedicalDisclaimer.
   ///
   /// In zh, this message translates to:
-  /// **'我已阅读并理解《医学免责声明》：本 App 不提供医疗建议、诊断或治疗，不能替代专业医疗服务'**
+  /// **'我已阅读并理解《免责声明》：本 App 不提供医疗建议、诊断或治疗，不能替代专业医疗服务'**
   String get setupConsentMedicalDisclaimer;
 
   /// No description provided for @trackingCustomize.
