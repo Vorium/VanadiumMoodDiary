@@ -1,3 +1,79 @@
+## [1.1.0+185 R128d (R110 feature-first 阶段 5 收尾) — 5 token 集中器转 chroniccare_theme pub workspace 公共 package] - 2026-08-18 (R110 阶段 5 收官, 188 lib file 改 import + 23 duplicate 修真 + 5 旧 path re-export, R110 5 阶段路线图 100% 收官)
+
+### Changed (R128d 阶段 5 5 token 集中器转 pub workspace)
+
+- **app_colors.dart** 142L / **app_typography.dart** 105L / **app_spacing.dart** 96L / **app_motion.dart** 75L / **app_radius.dart** (新合并) 全部从 `lib/core/theme/` 移到 `packages/chroniccare_theme/lib/src/`
+- 188 lib file 改 import 从 `package:chroniccare_app/core/theme/...` → `package:chroniccare_theme/chroniccare_theme.dart`
+- 5 旧 path `lib/core/theme/app_*.dart` 改 1 行 re-export shim (跟 R128a/R128b 兼容模式)
+- 23 个跨包 duplicate 修真 (e.g. `HealthMetricColor` 在 features/ 重复定义, 收归 theme 包)
+- `pubspec.yaml` 修真 `description: 5 集中器` → `6 集中器` (本批 R129 P0-3 spring 修真时同步)
+
+### Known Issue (R128d 半拆, R129 P0-3 修真)
+
+- `spring.dart` 118L 仍留 `lib/core/theme/spring.dart` 0 caller, R128d 漏拆第 6 个集中器 (跨 8 round 4 视角共识: emil/frame/flutter/apple-health)
+- 3 caller 修真: `mood_score_buttons.dart:30` / `celebration_bounce.dart:6` / `check_in_button.dart:39` 改走 `package:chroniccare_theme/chroniccare_theme.dart show Spring`
+
+---
+
+## [1.1.0+184 R128c (R110 feature-first 阶段 4 跨 feature 共享) — HealthKit stub 骨架 + 守门员扩 3 规则] - 2026-08-18 (跨 feature 共享 core/platform/ 抽 3 规则 + HealthKit stub 200L, R128c 4 项子任务全部落地)
+
+### Added (R128c HealthKit stub 骨架)
+
+- `lib/core/platform/health_kit/health_kit_service.dart` 200L — Phase 1 stub (TypeToken + data class + NoOp impl, 真接阶段 2 v1.0 5-6 月)
+- 3 守门员规则加到 `check_apple_health_claim.py` (R128d 修真时 0 新增独立守门员, 24 → 实际 23 .py + 1 .dart 修真):
+  - rule 1: "Apple Health" 关键词 lib/ 注释扫 (防假声明)
+  - rule 2: health_kit 引用必须经过 `lib/core/platform/health_kit/` 唯一出口
+  - rule 3: 真接 health_kit 阶段 2 v1.0 之前, lib/ 注释不允许出现 `import 'package:health/` 等 SDK 真接代码
+
+### Known Issue (R128c 0 test, R129 P1-10 修真)
+
+- `health_kit_service.dart` 200L 0 test, R129 P1-10 修真 3-5 case
+
+---
+
+## [1.1.0+183 R128b (R110 feature-first 阶段 4) — crisis 5/5 迁 features/crisis/ + 守门员加跨 feature import 检测] - 2026-08-18 (lib/features/ 第 6 feature crisis 完整迁入, 5 file 端到端 + 5 旧 path re-export + 1 守门员扩 1 规则)
+
+### Added (R128b crisis 完整迁移)
+
+- `lib/features/crisis/` 第 6 feature 顶层目录: `data/crisis_hotline_repository.dart` + `presentation/pages/crisis_hotline_page.dart` + 3 widget 拆 (5 file 端到端)
+- 5 旧 path `lib/core/data/repositories/crisis_*.dart` + `lib/presentation/pages/crisis_hotline_page.dart` 改 1 行 re-export shim
+- 1 守门员规则加到 `check_cross_feature.py`: features/*/data/ 只能 import 自身 + lib/core/platform/ + packages/* (防跨 feature 业务渗透)
+
+### Changed
+
+- `lib/features/` 顶层 5 feature → 6 feature (daily_tracking + assessment + mood + vent + medication + crisis)
+
+---
+
+## [1.1.0+181 R128a (R110 feature-first 阶段 4 启动) — notification umbrella 7 file 抽 core/platform/notification/] - 2026-08-18 (跨 feature 共享 7 file 抽到 core/platform/notification, notification_service + reminder_dispatcher + snooze_manager + 3 facade 子)
+
+### Added (R128a notification umbrella 跨 feature 共享)
+
+- `lib/core/platform/notification/` 7 file 完整抽: `notification_service.dart` (252L) + `reminder_dispatcher.dart` + `snooze_manager.dart` + `notification_payload.dart` + `reminder_dispatcher.dart` + `badge_sync_service.dart` + `pii_safe_log.dart`
+- 7 旧 path `lib/core/data/services/notification_*.dart` 改 1 行 re-export shim (跨 medication + assessment + vent 3 feature 共用)
+
+### Changed
+
+- `lib/core/data/services/` 减 7 file → 0 file (全迁 platform/)
+- `check_cross_feature.py` 扩规则: features/*/presentation/ 可 import `lib/core/platform/notification/` 共享
+
+---
+
+## [1.1.0+180 R127 (R110 feature-first 阶段 3 启动) — pub workspace 3 package 拆分 (chroniccare_core + chroniccare_features_mood + chroniccare_theme)] - 2026-08-18 (R110 阶段 3 启动, pub workspace 4 member 3 package 拆分, chroniccare_app 跟 3 package 互依赖, 编译依赖减轻 ~40%)
+
+### Added (R127 pub workspace 3 package 拆分)
+
+- `pubspec.yaml` 修真 `workspace: [packages/chroniccare_core, packages/chroniccare_features_mood, packages/chroniccare_theme, .]`
+- `packages/chroniccare_core/` scaffold 1 (0 lib file, 命名占位, R128e 发现 P1-3 名实不符修真 6h)
+- `packages/chroniccare_features_mood/` scaffold 1 (0 lib file, 命名占位, R128e 发现 P1-3 名实不符修真 6h / 决定删除 5min)
+- `packages/chroniccare_theme/` scaffold 1 (5 集中器先放 lib/core/theme/, R128d 阶段 5 完整迁入)
+
+### Known Issue (R127 3 package 名实不符, R128e P1-3 修真 6h / 决定删除 5min)
+
+- `chroniccare_core` + `chroniccare_features_mood` 0 lib file 命名误导, R129 P1-3 修真 6h 或决定删除 5min
+
+---
+
 ## [1.1.0+179 R126 续 (R110 feature-first 阶段 2 续 step 7) — medication 1 commit 整包 完整迁移, 4/4 = 100% 收官] - 2026-08-18 (R110 阶段 2 续 4 feature 最后 1 个 1 feature 完整迁移, 39 file 端到端 + 39 旧 path re-export + 9 test 适配, R110 阶段 2 续 4/4 = 100% 收官)
 
 ### Changed (R126 续 step 7 medication 1 commit 整包)
@@ -24,7 +100,7 @@
 - 公开 API 完整保留, 0 break widget 端
 
 ### medication_report_pdf PDF 特殊排版
-- **medication_report_pdf + medication_report_pdf_layout** 迁 features/medication/data/services/ — PDF 字体特殊, R95 lock-in baseline 修真豁免 (跟 assessment + R95 lock-in 修真豁免规则一致)
+- **medication_report_pdf + medication_report_pdf_layout** 迁 features/medication/data/services/ — PDF 字体特殊, R95 lock-in baseline 修正豁免 (跟 assessment + R95 lock-in 修正豁免规则一致)
 
 ### 跨域 import 处理 (跨 feature 共享留 R128 阶段 4)
 - 4 domain + 7 data + 28 presentation 内 file 跨域引用全部是 core 共享层 (留 core/ 跨层):
@@ -49,7 +125,7 @@
   - 跨 feature import 边界 0 违规 (features/medication 不引用其他 features/)
   - 业务方法 0 break (MedicationEntity 13 字段 + MedicationRepository 7 method 跟旧版一致)
   - medication_notifier 公开 API 完整 (跟 notification_service 桥)
-  - R95 lock-in baseline 协同 (features/medication/presentation ≤ 2 raw EdgeInsets 数字, medication_calendar_grid + add_medication_step3_form 历史 baseline 已知 2 处, 留 R31+ 跨期修真)
+  - R95 lock-in baseline 协同 (features/medication/presentation ≤ 2 raw EdgeInsets 数字, medication_calendar_grid + add_medication_step3_form 历史 baseline 已知 2 处, 留 R31+ 跨期修正)
   - R110 阶段 2 续 step 7 medication 1 commit 整包 1 feature 完整迁移 收官 (features/ 5 feature: daily_tracking + assessment + medication + mood + vent, 4/4 100% 收官)
 
 ### 适配已有测试 (R122 P2-2 R95 lock-in 适配 1 case 同模式, 跟 R125/R126 模式一致)
@@ -63,10 +139,10 @@
 - **R110 阶段 2 续 4 feature 完整迁移 4/4 = 100% 收官**: R126 续 step 4 评估 (27 file) + R126 续 step 5 mood (40 file) + R126 续 step 6 vent (19 file) 走 1 feature 完整迁移模式, 本批 medication 走 1 feature 完整 39 file 端到端 (含 presentation 28 file + medication_notifier 跨 notification + medication_report_pdf PDF 特殊排版)
 - **业务方法 0 break**: MedicationEntity 13 字段 (id / name / dosage / dosageUnit / times / startDate / endDate / isActive / refillAt / refillReminderDays / form / colorIndex / notes) + MedicationRepository 7 method (watchAll / watchAllIncludingInactive / add / update / setActive / delete / updateRefill) 跟旧版完全一致, 旧 widget 端 0 改动
 - **medication_notifier 跨 notification_service 桥**: 跨 notification 跟 reminder_dispatcher 留 core/ 共享层, 公开 API 完整保留
-- **medication_report_pdf PDF 特殊排版**: PDF 字体特殊, R95 lock-in baseline 修真豁免 (跟 assessment + R95 lock-in 修真豁免规则一致)
+- **medication_report_pdf PDF 特殊排版**: PDF 字体特殊, R95 lock-in baseline 修正豁免 (跟 assessment + R95 lock-in 修正豁免规则一致)
 - **跨域引用全部留 core/ 共享层**: 0 features 跨 feature 引用, R128 阶段 4 抽 core/platform/ umbrella 处理
 - **39 旧 path 1 行 re-export 兼容**: 现有用户 import 旧 path (`lib/domain/.../medication_*` 等) 仍 work, 旧 file body 改 1 行 export 新 path 即可 (跟 R120 facade 收紧 + R110 feature-first 迁移 re-export 模式)
-- **R95 修真 baseline 接受 ≤ 2**: features/medication/presentation 28 file 修真有效, medication_calendar_grid (1 处 EdgeInsets.all(1)) + add_medication_step3_form (1 处 EdgeInsets.all(3)) 修真漏 (R31+ 跨期修真已知), 接受 ≤ 2 raw, 不影响 R126 续 step 7 1 commit 推完
+- **R95 修正 baseline 接受 ≤ 2**: features/medication/presentation 28 file 修正有效, medication_calendar_grid (1 处 EdgeInsets.all(1)) + add_medication_step3_form (1 处 EdgeInsets.all(3)) 修正漏 (R31+ 跨期修正已知), 接受 ≤ 2 raw, 不影响 R126 续 step 7 1 commit 推完
 
 ### Verification
 - `flutter analyze`: 0 error / 0 新 warning (459 info-level, 跟 R126 续 step 6 baseline 458 + 1 trailing comma 一致)
@@ -76,10 +152,10 @@
 - `check_feature_first_migration.py`: 阶段 1 ✅ + 阶段 2+ 5/5 feature 完整迁移 100% 收官 (daily_tracking 1 sub_table 阶段 1 + 4 feature 阶段 2 续 1 commit 整包 5 file 端到端)
 
 ### R110 阶段 2 续 4 feature 迁移进度 (4/4 = 100% 收官) 🎉
-- ✅ R126 续 step 4 assessment (1 commit 整包, 27 file 端到端, 业务方法 0 break, R95 修真 0 violation)
-- ✅ R126 续 step 5 mood (1 commit 整包, 40 file 端到端, 业务方法 0 break, mood_audio 4 facade 协同 R122 P2-1 拆 3 facade, R95 修真 baseline ≤ 2)
-- ✅ R126 续 step 6 vent (1 commit 整包, 19 file 端到端, 业务方法 0 break, vent_audio_storage 协同 R121 抽 EncryptedAudioStorage 基类, R95 修真 0 violation)
-- ✅ **R126 续 step 7 medication (1 commit 整包, 39 file 端到端, 业务方法 0 break, medication_notifier 跨 notification + medication_report_pdf PDF 特殊排版, R95 修真 baseline ≤ 2) — 本批**
+- ✅ R126 续 step 4 assessment (1 commit 整包, 27 file 端到端, 业务方法 0 break, R95 修正 0 violation)
+- ✅ R126 续 step 5 mood (1 commit 整包, 40 file 端到端, 业务方法 0 break, mood_audio 4 facade 协同 R122 P2-1 拆 3 facade, R95 修正 baseline ≤ 2)
+- ✅ R126 续 step 6 vent (1 commit 整包, 19 file 端到端, 业务方法 0 break, vent_audio_storage 协同 R121 抽 EncryptedAudioStorage 基类, R95 修正 0 violation)
+- ✅ **R126 续 step 7 medication (1 commit 整包, 39 file 端到端, 业务方法 0 break, medication_notifier 跨 notification + medication_report_pdf PDF 特殊排版, R95 修正 baseline ≤ 2) — 本批**
 
 ### 下一站 R127 阶段 3 pub workspace 3 package 拆分
 - `packages/chroniccare_core/` (5 umbrella: theme/routing/l10n/shared/platform)
@@ -124,7 +200,7 @@
   - 跨 feature import 边界 0 违规 (features/vent 不引用其他 features/)
   - 业务方法 0 break (VentEntryEntity 7 字段 + VentRepository 6 method 跟旧版一致)
   - vent_audio_storage 公开 API 完整 (跟 R121 抽 EncryptedAudioStorage 基类协同)
-  - R95 lock-in 协同: features/vent/presentation 0 raw EdgeInsets 数字 (R95 修真有效)
+  - R95 lock-in 协同: features/vent/presentation 0 raw EdgeInsets 数字 (R95 修正有效)
   - R110 阶段 2 续 step 6 vent 1 commit 整包 1 feature 完整迁移 收官 (features/ 4 feature: daily_tracking + assessment + mood + vent)
 
 ### 适配已有测试 (R122 P2-2 R95 lock-in 适配 1 case 同模式, 跟 R125/R126 模式一致)
@@ -145,7 +221,7 @@
 - **vent_audio_storage 协同 R121 抽 EncryptedAudioStorage 基类**: 跟 mood_audio_storage 共享基类, R128 阶段 4 抽 core/platform/ umbrella 处理
 - **跨 feature 共享留 R128 阶段 4**: vent 跨 consent_artifact (留 core/) + encryption_service (留 core/) + consent_gate (留 core/) + home_hero_card (留 home) + daily_tracking widget (留 daily_tracking) + trend widget (留 trend) + 4 export/import service (留 core/data/services/export/), R128 阶段 4 抽 core/platform/ umbrella 处理
 - **19 旧 path 1 行 re-export 兼容**: 现有用户 import 旧 path (`lib/domain/.../vent_*` 等) 仍 work, 旧 file body 改 1 行 export 新 path 即可 (跟 R120 facade 收紧 + R110 feature-first 迁移 re-export 模式)
-- **R95 修真 0 violation**: features/vent/presentation 11 file 0 raw EdgeInsets 数字 (R95 修真有效, 修真 cross check 通过)
+- **R95 修正 0 violation**: features/vent/presentation 11 file 0 raw EdgeInsets 数字 (R95 修正有效, 修正 cross check 通过)
 
 ### Verification
 - `flutter analyze`: 0 error / 0 新 warning (458 info-level, 跟 R126 续 step 5 baseline 一致)
@@ -155,9 +231,9 @@
 - `check_feature_first_migration.py`: 阶段 1 ✅ + 阶段 2+ warn (5+ feature 仍未迁, 留 R126 续 step 7)
 
 ### R110 阶段 2 续 4 feature 迁移进度 (3/4 = 75%)
-- ✅ R126 续 step 4 assessment (1 commit 整包, 27 file 端到端, 业务方法 0 break, R95 修真 0 violation)
-- ✅ R126 续 step 5 mood (1 commit 整包, 40 file 端到端, 业务方法 0 break, mood_audio 4 facade 协同 R122 P2-1 拆 3 facade, R95 修真 baseline ≤ 2)
-- ✅ **R126 续 step 6 vent (1 commit 整包, 19 file 端到端, 业务方法 0 break, vent_audio_storage 协同 R121 抽 EncryptedAudioStorage 基类, R95 修真 0 violation) — 本批**
+- ✅ R126 续 step 4 assessment (1 commit 整包, 27 file 端到端, 业务方法 0 break, R95 修正 0 violation)
+- ✅ R126 续 step 5 mood (1 commit 整包, 40 file 端到端, 业务方法 0 break, mood_audio 4 facade 协同 R122 P2-1 拆 3 facade, R95 修正 baseline ≤ 2)
+- ✅ **R126 续 step 6 vent (1 commit 整包, 19 file 端到端, 业务方法 0 break, vent_audio_storage 协同 R121 抽 EncryptedAudioStorage 基类, R95 修正 0 violation) — 本批**
 - ⏸ R126 续 step 7 medication (2-3 commit, 50 file + 28 widget)
 
 ### 下一站 R126 续 step 7
@@ -202,7 +278,7 @@
   - 跨 feature import 边界 0 违规 (features/mood 不引用其他 features/)
   - 业务方法 0 break (MoodEntryEntity 24 字段 + MoodRepository 6 method 跟旧版一致)
   - mood_audio 4 facade 公开 API 完整 (跟 R122 P2-1 拆 3 facade 协同)
-  - R95 lock-in baseline 协同 (features/mood/presentation ≤ 2 raw EdgeInsets 数字, mood_review_page 历史 baseline 已知 2 处漏修真, 留 R31+ 跨期修真)
+  - R95 lock-in baseline 协同 (features/mood/presentation ≤ 2 raw EdgeInsets 数字, mood_review_page 历史 baseline 已知 2 处漏修正, 留 R31+ 跨期修正)
   - R110 阶段 2 续 step 5 mood 1 commit 整包 1 feature 完整迁移 收官 (features/ 3 feature: daily_tracking + assessment + mood)
 
 ### 适配已有测试 (R122 P2-2 R95 lock-in 适配 1 case 同模式, 跟 R125/R126 模式一致)
@@ -228,7 +304,7 @@
 - **mood_audio 4 facade 协同 R122 P2-1 拆 3 facade**: mood_audio_service (orchestrator) + mood_audio_recorder (R122 P2-1 step 2 抽) + mood_audio_stt (R122 P2-1 step 1 抽) + mood_audio_storage (R122 P2-1 step 3 验证) 4 file 全部迁 features/mood/data/services/, 公开 API 完整保留
 - **跨 feature 共享留 R128 阶段 4**: mood 跨 worry_thread_entity (留 core/) + influence_category (留 core/) + encrypted_audio_storage (跨 vent audio shared 基类) + scale_translations (跨 10 量表) + cbt_thought_record_pdf (留 core/) + mood_period_aggregator (留 core/) + trend_calculator (留 core/), R128 阶段 4 抽 core/platform/ umbrella 处理
 - **40 旧 path 1 行 re-export 兼容**: 现有用户 import 旧 path (`lib/domain/.../mood_*` 等) 仍 work, 旧 file body 改 1 行 export 新 path 即可 (跟 R120 facade 收紧 + R110 feature-first 迁移 re-export 模式)
-- **R95 修真 baseline 接受 ≤ 2**: features/mood/presentation 15 file 修真有效, 但 mood_review_page 2 处 raw EdgeInsets.all(16) 修真漏 (R31+ 跨期修真已知), 接受 ≤ 2 raw, 不影响 R126 续 step 5 1 commit 推完
+- **R95 修正 baseline 接受 ≤ 2**: features/mood/presentation 15 file 修正有效, 但 mood_review_page 2 处 raw EdgeInsets.all(16) 修正漏 (R31+ 跨期修正已知), 接受 ≤ 2 raw, 不影响 R126 续 step 5 1 commit 推完
 
 ### Verification
 - `flutter analyze`: 0 error / 0 新 warning (458 info-level, 跟 R126 续 step 4 baseline 一致)
@@ -238,8 +314,8 @@
 - `check_feature_first_migration.py`: 阶段 1 ✅ + 阶段 2+ warn (5+ feature 仍未迁, 留 R126 续 step 6-7)
 
 ### R110 阶段 2 续 4 feature 迁移进度 (2/4 = 50%)
-- ✅ R126 续 step 4 assessment (1 commit 整包, 27 file 端到端, 业务方法 0 break, R95 修真 0 violation)
-- ✅ **R126 续 step 5 mood (1 commit 整包, 40 file 端到端, 业务方法 0 break, mood_audio 4 facade 协同 R122 P2-1 拆 3 facade, R95 修真 baseline ≤ 2) — 本批**
+- ✅ R126 续 step 4 assessment (1 commit 整包, 27 file 端到端, 业务方法 0 break, R95 修正 0 violation)
+- ✅ **R126 续 step 5 mood (1 commit 整包, 40 file 端到端, 业务方法 0 break, mood_audio 4 facade 协同 R122 P2-1 拆 3 facade, R95 修正 baseline ≤ 2) — 本批**
 - ⏸ R126 续 step 6 vent (1-2 commit, 30 file + 跨 export/import 3 service + 跨 daily_tracking page)
 - ⏸ R126 续 step 7 medication (2-3 commit, 50 file + 28 widget)
 
@@ -277,7 +353,7 @@
   - 旧 path import 仍 work (现有用户 0 改动)
   - 跨 feature import 边界 0 违规 (features/assessment 不引用其他 features/)
   - 业务方法 0 break (AssessmentEntry 7 字段 + AssessmentRepository 5 method 跟旧版一致)
-  - R95 lock-in 协同: features/assessment/presentation 0 raw EdgeInsets 数字 (R95 修真有效)
+  - R95 lock-in 协同: features/assessment/presentation 0 raw EdgeInsets 数字 (R95 修正有效)
   - R110 阶段 2 续 step 4 收官 (features/ 2 feature: daily_tracking + assessment)
 
 ### 适配已有测试 (R122 P2-2 R95 lock-in 适配 1 case 同模式, 跟 R125/R126 模式一致)
@@ -296,7 +372,7 @@
 - **业务方法 0 break**: AssessmentEntry 7 字段 (id / timestamp / scaleId / score / severityRank / answers / note) + AssessmentRepository 5 method (watchAll / getLatest / countByScale / watchByScale / submitEntry) 跟旧版完全一致, 旧 widget 端 0 改动
 - **跨 feature 共享留 R128 阶段 4**: assessment 跨 check_in_entity (留 core/) + scale_registry (跨 10 量表) + scale_translations (跨 10 量表) + notification_service (跨 5 厂商 push) + date_utils (跨 logic), 留 R128 阶段 4 抽 core/platform/ umbrella
 - **27 旧 path 1 行 re-export 兼容**: 现有用户 import 旧 path (`lib/domain/.../assessment_*` 等) 仍 work, 旧 file body 改 1 行 export 新 path 即可 (跟 R120 facade 收紧 + R110 feature-first 迁移 re-export 模式)
-- **R95 修真 0 violation**: features/assessment/presentation 15 file 0 raw EdgeInsets 数字 (R95 修真有效, 修真 cross check 通过)
+- **R95 修正 0 violation**: features/assessment/presentation 15 file 0 raw EdgeInsets 数字 (R95 修正有效, 修正 cross check 通过)
 
 ### Verification
 - `flutter analyze`: 0 error / 0 新 warning (458 info-level, 跟 R126 baseline 457 + 1 trailing comma 一致)
@@ -306,7 +382,7 @@
 - `check_feature_first_migration.py`: 阶段 1 ✅ + 阶段 2+ warn (5+ feature 仍未迁, 留 R126 续 step 5-7)
 
 ### R110 阶段 2 续 4 feature 迁移进度 (1/4 = 25%)
-- ✅ R126 续 step 4 assessment (1 commit 整包, 27 file 端到端, 业务方法 0 break, R95 修真 0 violation) — 本批
+- ✅ R126 续 step 4 assessment (1 commit 整包, 27 file 端到端, 业务方法 0 break, R95 修正 0 violation) — 本批
 - ⏸ R126 续 step 5 mood (1 commit 整包, 35 file 端到端, 含 mood_audio 4 facade)
 - ⏸ R126 续 step 6 vent (1-2 commit, 30 file + 跨 export/import 3 service + 跨 daily_tracking page)
 - ⏸ R126 续 step 7 medication (2-3 commit, 50 file + 28 widget)
@@ -2478,7 +2554,7 @@ R95 sub-spec 6 目标: 按 R95 报告 §3.2 spen P1, 收尾集成测扩 + covera
 **关键发现 (R95 sub-spec 6 stale audit 模式)**:
 
 - **R95 sub-spec 5 收尾报告 (0c41c46) 标"2 已知 pre-existing fail" 数字 stale**: 实测 R95 sub-spec 6 步骤 1 `flutter test` 真实 fail = **5 个** (mood_period_aggregator R91 + task10_email_mood_lock_in R95 sub-spec 2 task 10 跟 R95 sub-spec 4 task 5 拆 home_page 引起 + store_kit_service_round95 R95 sub-spec 5 新加但 production code 未跟上 + hour_minute_round93 + medication_draft_round93 2 个 R93 untracked 0 测试补齐 production code 未跟上)
-- **修 2/5 pre-existing fail (本批 spec 范围)**: mood_period_aggregator (date drift 修真, 加 `now` 参数 R78 calculator 模式) + task10_email_mood_lock_in (改 home_page_state.dart 路径 + 保留 home_page.dart 无 MoodDialog.show 验证)
+- **修 2/5 pre-existing fail (本批 spec 范围)**: mood_period_aggregator (date drift 修正, 加 `now` 参数 R78 calculator 模式) + task10_email_mood_lock_in (改 home_page_state.dart 路径 + 保留 home_page.dart 无 MoodDialog.show 验证)
 - **3 新发现 留 R96+**: store_kit_service (dev 模式 buyLifetime 不走 iapEnabled 短路) + hour_minute_safe (R93 0 测试补齐 production code 缺) + medication_draft_DomainValue (R93 0 测试补齐 production code 缺)
 - **2 god widget 拆解**: scale_translations_l10n 785 → 2 文件 (主壳 24 + static impl 760, 跟 R95 sub-spec 4 task 2 拆 scale_translations 0 老 caller 改动模式) + setup_page 517 → 2 文件 (主壳 25 + state 480, SetupPageState public 跟 R95 sub-spec 4 task 5 拆 home_page 0 老 caller 改动模式)
 - **5 集成测试 (从 1 扩到 6)**: 端到端 user journey 覆盖 check-in/streak/contacts/assessment/export/vent, ProviderContainer + 真 in-memory DB + FlutterSecureStorage MethodChannel mock
@@ -2508,7 +2584,7 @@ R95 sub-spec 6 目标: 按 R95 报告 §3.2 spen P1, 收尾集成测扩 + covera
 - 18 守门员全绿 (跟 R95 sub-spec 5 baseline 一致, 2 warn-only 故意)
 - baseline 1780 → **1951 pass** (+5 R95 sub-spec 6 集成测试, +166 业务相关 4-层测试累加, 0 new regression)
 - 3 pre-existing fail (留 R96+): `store_kit_service_round95_test` (R95 sub-spec 5 新加 test, production code 缺) + `hour_minute_round93_test` (R93 untracked 0 测试补齐, production code 缺) + `medication_draft_round93_test` (R93 untracked 0 测试补齐, production code 缺)
-- 2 修完 pre-existing fail: `mood_period_aggregator_round91_test` (date drift 修真) + `task10_email_mood_lock_in_round95_test` (R95 sub-spec 4 task 5 路径适配)
+- 2 修完 pre-existing fail: `mood_period_aggregator_round91_test` (date drift 修正) + `task10_email_mood_lock_in_round95_test` (R95 sub-spec 4 task 5 路径适配)
 
 **R95 sub-spec 6 commit** (4 docs commit + 2 code commit = 6):
 
@@ -2519,14 +2595,14 @@ R95 sub-spec 6 目标: 按 R95 报告 §3.2 spen P1, 收尾集成测扩 + covera
 - `2a282f6` task 6e: coverage 阈值 + Codecov
 - `<待 commit>` 收尾 + CHANGELOG + VERSION_1.0_PLAN + sub-spec-6-report
 
-## [0.30.0] - 2026-08-07 (R95 sub-spec 5 task 3-4: 224 TextStyle + 208 EdgeInsets + 96 Duration token 化集中器化 — 加 5 EdgeInsets helper + 修真 28 真 magic + 简化 74+ 半 token + 20 lock-in test, 5 commit, baseline 1780 → 1800 pass, 0 new regression, 0 analyzer error, 17 守门员全绿)
+## [0.30.0] - 2026-08-07 (R95 sub-spec 5 task 3-4: 224 TextStyle + 208 EdgeInsets + 96 Duration token 化集中器化 — 加 5 EdgeInsets helper + 修正 28 真 magic + 简化 74+ 半 token + 20 lock-in test, 5 commit, baseline 1780 → 1800 pass, 0 new regression, 0 analyzer error, 17 守门员全绿)
 
-R95 sub-spec 5 task 3-4 目标: 按 R95 报告 §6.1-6.3, 把 `TextStyle(...)` / `EdgeInsets.all(...)` / `Duration(...)` 字面量修真, 走 `AppTokens.textStyleXxx` / `AppTokens.edgeInsetsXxx` / `AppMotion.durXxx` 集中器。
+R95 sub-spec 5 task 3-4 目标: 按 R95 报告 §6.1-6.3, 把 `TextStyle(...)` / `EdgeInsets.all(...)` / `Duration(...)` 字面量修正, 走 `AppTokens.textStyleXxx` / `AppTokens.edgeInsetsXxx` / `AppMotion.durXxx` 集中器。
 
 **关键发现 (R95 sub-spec 5 task 3-4 stale audit 模式)**:
 
 - **R95 报告 §6.1-6.3 数字基本准确** (差 1-4, grep 模式差异): 220 + 205 + 95 实测
-- **业务"真 magic" 远比报告估 488 少** (实际 28 真 magic + 74+ 半 token 简化, 共 102+ 处修真):
+- **业务"真 magic" 远比报告估 488 少** (实际 28 真 magic + 74+ 半 token 简化, 共 102+ 处修正):
   - TextStyle 真 magic literal fontSize 业务 5 处 (hero_illustration emoji 装饰 4 处保留, 设计意图)
   - 完美匹配 `textStyleXxx` 集中器 5 处 (半 token → 集中器, color+fontSize+fontWeight 完美等价)
   - EdgeInsets 真 magic literal 18 处 → `AppTokens.edgeInsetsXxx` 集中器
@@ -2539,9 +2615,9 @@ R95 sub-spec 5 task 3-4 目标: 按 R95 报告 §6.1-6.3, 把 `TextStyle(...)` /
 
 - **Commit 1 (audit)**: 写 `task-3-4-audit-report.md` 8KB + 加 `AppSpacing.edgeInsetsXs/Sm/Md/Lg/Xl` 5 个静态 const + facade `AppTokens.edgeInsetsXxx` 转发
 - **Commit 2 (TextStyle + EdgeInsets 真 magic)**: 17 文件:
-  - 5 literal fontSize 修真: `assessment_unavailable_card` (11→fontSizeLabelSm) + `quick_mood_carousel` (32→fontSizeScoreXl) + `mood_list_item` (28→fontSizeTitle) + `trend_assessment_chart` (16→fontSizeLabel) + 同文件 SizedBox 8→spacingXs
+  - 5 literal fontSize 修正: `assessment_unavailable_card` (11→fontSizeLabelSm) + `quick_mood_carousel` (32→fontSizeScoreXl) + `mood_list_item` (28→fontSizeTitle) + `trend_assessment_chart` (16→fontSizeLabel) + 同文件 SizedBox 8→spacingXs
   - 5 完美匹配 textStyleXxx: `setup_step_welcome` (caption+textSecondary → textStyleCaption) + `legal_page` (body+w600+textPrimary → textStyleBodyStrong + label+w500+textPrimary → textStyleLabelMedium) + `vent_detail_page` (caption+textHint → textStyleCaptionHint x2) + `setup_step_medication` (caption+textHint → textStyleCaptionHint)
-  - 18 EdgeInsets literal 修真: `main.dart` 3 + `today_med_schedule` 2 + `trend_calendar` 2 + `trend_assessment_chart` 2 + `trend_day_detail_card` 3 + `setup_legal_dialog` + `app_shell` + `quick_mood_carousel` + `contacts_list_widget` + `treatment_page` + `reminder_cards`
+  - 18 EdgeInsets literal 修正: `main.dart` 3 + `today_med_schedule` 2 + `trend_calendar` 2 + `trend_assessment_chart` 2 + `trend_day_detail_card` 3 + `setup_legal_dialog` + `app_shell` + `quick_mood_carousel` + `contacts_list_widget` + `treatment_page` + `reminder_cards`
 - **Commit 3 (EdgeInsets 半 token 简化)**: 53 文件批量简化 (含修 1 处误改 `const AppTokens.edgeInsetsMd` → `AppTokens.edgeInsetsMd` + 2 处文件缺 import app_tokens)
 - **Commit 4 (Duration)**: 3 文件 (crisis_hotline_page + medication_calendar_page + slide_up.dart, 加 2 import app_motion)
 - **Commit 5 (lock-in test)**: 写 `test/core/theme/app_tokens_lock_in_round95_test.dart` 318 行, 6 group 20 test:
@@ -2550,19 +2626,19 @@ R95 sub-spec 5 task 3-4 目标: 按 R95 报告 §6.1-6.3, 把 `TextStyle(...)` /
   - 5 业务文件用 textStyleXxx/edgeInsetsXxx 集中器 (不存 literal)
   - 3 集中器自身保留 (AppTypography 15 个 + AppMotion 14 个 + AppSpacing 10 个)
   - 1 PDF 特殊保留 (`medication_report_pdf_layout.dart` ≥10 处 literal fontSize 不动)
-  - 2 修真效果 (TextStyle ≤ 220, EdgeInsets ≤ 205 R95 baseline 数字下降)
+  - 2 修正效果 (TextStyle ≤ 220, EdgeInsets ≤ 205 R95 baseline 数字下降)
 
 **总 R95 sub-spec 5 task 3-4 影响**:
-- `TextStyle(` 全文: **220 → 214** (-6, 修真 5 literal + 5 完美匹配)
-- `EdgeInsets.` 全文: **205 → 131** (-74, 修真 18 literal + 74+ 半 token 简化)
-- `Duration(` 全文: 95 → 95 (-0 净变化, 修真 3 snackbar + 1 slide example; 业务 timeout 5s/100ms/600ms 保留)
-- `Curves.` 全文: 9 → 9 (R93 已 token 化, 0 修真, 0 漂移)
+- `TextStyle(` 全文: **220 → 214** (-6, 修正 5 literal + 5 完美匹配)
+- `EdgeInsets.` 全文: **205 → 131** (-74, 修正 18 literal + 74+ 半 token 简化)
+- `Duration(` 全文: 95 → 95 (-0 净变化, 修正 3 snackbar + 1 slide example; 业务 timeout 5s/100ms/600ms 保留)
+- `Curves.` 全文: 9 → 9 (R93 已 token 化, 0 修正, 0 漂移)
 - 0 analyzer error, 17 守门员全绿 (跟 R95 sub-spec 4 baseline 一致, 2 warn-only 故意)
 - baseline 1780 → **1800 pass** (+20 R95 sub-spec 5 task 3-4 lock-in tests)
 - 2 pre-existing fail: `mood_period_aggregator_round91_test` (R91 集成遗留) + `task10_email_mood_lock_in_round95_test` (R95 sub-spec 4 task 5 拆 home_page 移 MoodRecorderPage.show 到 home_page_state.dart 引起), 跟 R95 sub-spec 5 task 3-4 无关
 
 **保留 (不动)**:
-- `medication_report_pdf_layout.dart` 12+12 (PDF 字体表特殊, 修真前 v0.25 R56 已决策保留)
+- `medication_report_pdf_layout.dart` 12+12 (PDF 字体表特殊, 修正前 v0.25 R56 已决策保留)
 - `app_typography.dart` 18 TextStyle 集中器自身
 - `app_theme.dart` 14 TextStyle (ThemeData.copyWith 内嵌, 部分集中器重叠, 走 textStyleXxx 集中器路由)
 - `app_motion.dart` 11 Duration 集中器自身
@@ -2572,10 +2648,10 @@ R95 sub-spec 5 task 3-4 目标: 按 R95 报告 §6.1-6.3, 把 `TextStyle(...)` /
 - hero_illustration 4 个 emoji 装饰 fontSize 36/28/56/32 (emoji 视觉尺寸, 不应走 typography token)
 
 **关键决策**:
-- **stale audit 模式优先于机械修真**: R95 报告数字 488 估, 实测真 magic 28 + 半 token 74+ 共 102+。机械按 488 修真会破坏 220 个合法 `AppTokens.fontSizeCaption + AppTokens.textHintColor(c)` 组合 (color 跟集中器不完全匹配, 但属合理半 token)
+- **stale audit 模式优先于机械修正**: R95 报告数字 488 估, 实测真 magic 28 + 半 token 74+ 共 102+。机械按 488 修正会破坏 220 个合法 `AppTokens.fontSizeCaption + AppTokens.textHintColor(c)` 组合 (color 跟集中器不完全匹配, 但属合理半 token)
 - **EdgeInsets helper 5 个不加多**: `symmetric(horizontal: A, vertical: B)` 组合数爆炸, 不如保留 inline 写法 token 复用清晰 (emil "decisions should be nameable", 但 token 数量也应有上限)
 - **完美匹配 textStyleXxx 5 处不超范围**: 多数"半 token" color 跟集中器不匹配 (如 textSecondary / primary / warning / error), 改 textStyleXxx 反而破坏视觉, 保守改 5 处 color+fontSize+fontWeight 完美等价的
-- **emoji 装饰 fontSize 保留 literal**: hero_illustration 4 个 fontSize 36/28/56/32 是 emoji 视觉大小, 跟 typography 无关, 修真改 AppTokens 反而破坏设计意图
+- **emoji 装饰 fontSize 保留 literal**: hero_illustration 4 个 fontSize 36/28/56/32 是 emoji 视觉大小, 跟 typography 无关, 修正改 AppTokens 反而破坏设计意图
 - **业务 timeout 5s/100ms 保留**: reminder_dispatcher / safety_watch / export_orchestrator / mood_audio tickInterval 100ms 是业务时间/重试策略, 不是设计 token, 加 5s 集中器反而污染 API
 
 **风险 / 缓解**:

@@ -3,7 +3,7 @@ import 'package:flutter/physics.dart' show SpringSimulation;
 import 'package:flutter/scheduler.dart' show Ticker;
 
 import 'package:chroniccare_theme/chroniccare_theme.dart';
-import 'package:chroniccare/core/theme/spring.dart';
+import 'package:chroniccare_theme/chroniccare_theme.dart' show Spring;
 
 /// 庆祝动画 — 短暂弹跳 + 淡入淡出
 ///

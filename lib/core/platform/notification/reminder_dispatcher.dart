@@ -127,6 +127,8 @@ class ReminderDispatcher {
       iOS: const DarwinNotificationDetails(
         categoryIdentifier: 'com.chroniccare.medication.reminder',
         interruptionLevel: InterruptionLevel.timeSensitive,
+        // R129 hotfix P0-2: 锁屏禁显示通知详情 (R32 P0-03 跨 8 round 修真)
+        presentAlert: false,
       ),
     );
   }

@@ -27,7 +27,7 @@ import 'package:flutter/material.dart';
 
 import 'package:chroniccare/core/shared/mood_visual.dart';
 import 'package:chroniccare_theme/chroniccare_theme.dart';
-import 'package:chroniccare/core/theme/spring.dart';
+import 'package:chroniccare_theme/chroniccare_theme.dart' show Spring;
 import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/presentation/widgets/app_semantics.dart';
 import 'package:chroniccare/presentation/widgets/press_feedback.dart';

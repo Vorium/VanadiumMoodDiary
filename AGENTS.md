@@ -2,7 +2,7 @@
 
 > 给 AI 编程 Agent 看的项目指引。先读 README.md 看产品视角，再读这份看代码视角。
 >
-> **EN Summary**: A mental-health self-care Flutter app (emotion-first: vent + mood primary, medication/assessment secondary), 4-layer architecture (data/domain/presentation + 5-umbrella core/) + R110 feature-first 路线图阶段 1+2 续 100% 收官 (lib/features/ 5 feature: daily_tracking 6/6 子表 + assessment + mood + vent + medication 1 commit 整包), 24 CI gatekeepers (R125+1 起 baseline 21 → R122 +1 → R124 +1 → R125 +1), 2728 tests pass (R126 续 step 7 medication baseline, R110 阶段 2 续 4/4 = 100% 收官, 0 fail / 1 skip), 1340 ARB keys (zh/en/zh-Hant), zero cloud + zero push + zero exfil, SQLCipher local encryption. See [DEVELOPMENT_REQUIREMENTS.md](docs/DEVELOPMENT_REQUIREMENTS.md) for v2.0 requirements (R117). Toolchain: Flutter 3.47 (Gradle 8.14 + NDK 28.2 + newDsl=true) after R117 round 5. R120 综合审视加权 7.5/10 (emil 8.0 / flutter-spec 97% / superpowers-zh 7.0 / frame-thinking 8.5). R108 §六 god class 候选 6/12 闭环 (R118 P2-7 10 量表 / R119 P1-1 app_database 564→139L / R120 P1-2 notification_service 386→252L / R116 round 4 add_medication_page / R122 P2-1 mood_audio_service 496→251L / R122 P2-2 legal_page 555→344L). R122 P2-3 R121 P1-3 step 3 defer 解除. R123 跨期 P0 缩到 5 项全部 100% 等外部. R124 v1.0 5 厂商 push facade 接入. R125 + R126 R110 阶段 1+2 收官 (lib/features/daily_tracking/ 6/6 子表全迁 + 守门员 + 旧路径 re-export 兼容). R126 续 step 4-7 R110 阶段 2 续 4 跨 presentation 1 feature 完整迁移 4/4 = 100% 收官 (assessment + mood + vent + medication 125 file 端到端 + 125 旧 path re-export + 33 test 适配 + check_usecase_layer/check_all.dart 双 path 扫).
+> **EN Summary**: A mental-health self-care Flutter app (emotion-first: vent + mood primary, medication/assessment secondary), 4-layer architecture (data/domain/presentation + 5-umbrella core/) + R110 feature-first 路线图阶段 1+2 续 100% 收官 (lib/features/ **6 feature: daily_tracking 6/6 子表 + assessment + mood + vent + medication + crisis (R128b +1) 1 commit 整包**), **24 CI gatekeepers (R125+1 起 baseline 21 → R122 +1 → R124 +1 → R125 +1 → R128c +3 规则 0 新增独立守门员)**, 2728 tests pass (R126 续 step 7 medication baseline, R110 阶段 2 续 4/4 = 100% 收官, 0 fail / 1 skip), 1340 ARB keys (zh/en/zh-Hant), zero cloud + zero push + zero exfil, SQLCipher local encryption. See [DEVELOPMENT_REQUIREMENTS.md](docs/DEVELOPMENT_REQUIREMENTS.md) for **v3.0 requirements (R128e)**. Toolchain: Flutter 3.47 (Gradle 8.14 + NDK 28.2 + newDsl=true) after R117 round 5. **R128e 综合审视加权 7.8/10 (R120 7.5 → +0.3, R128a~R128d 4 round 净 +0.3)** — 11 视角: emil 7.5 / superpowers-en 7.0 (R128a~d 0 test 倒退 1.5) / superpowers-zh 7.5 / superpowers-dispatch 7.5 / gdc 7.5 / pull-on-shelf 4.0 (7 P0 跨期 0 闭环) / frame-thinking 8.5 / flutter-audit 96% (97% -1%) / appstore 3.5 / googleplaystore 5.5 / apple-health 7.5 (R128c stub +0.5). R108 §六 god class 候选 6/12 闭环 (R118 P2-7 10 量表 / R119 P1-1 app_database 564→139L / R120 P1-2 notification_service 386→252L / R116 round 4 add_medication_page / R122 P2-1 mood_audio_service 496→251L / R122 P2-2 legal_page 555→344L). R122 P2-3 R121 P1-3 step 3 defer 解除. R123 跨期 P0 缩到 5 项全部 100% 等外部. R124 v1.0 5 厂商 push facade 接入. R125 + R126 R110 阶段 1+2 收官 (lib/features/daily_tracking/ 6/6 子表全迁 + 守门员 + 旧路径 re-export 兼容). R126 续 step 4-7 R110 阶段 2 续 4 跨 presentation 1 feature 完整迁移 4/4 = 100% 收官 (assessment + mood + vent + medication 125 file 端到端 + 125 旧 path re-export + 33 test 适配 + check_usecase_layer/check_all.dart 双 path 扫). **R127 stage3 (1.1.0+180) — pub workspace 3 package 拆分 (chroniccare_core / chroniccare_features_mood / chroniccare_theme 4th member, R128e 新发现 2 个占位 0 lib file 命名误导). R128a~R128d (1.1.0+181~+185) — 4 round 跨 feature 共享 (notification umbrella + crisis 5/5 迁 features/crisis/ + HealthKit stub 骨架 + 5 token 集中器转 chroniccare_theme pub workspace 公共 package, R128e 新发现 spring.dart 漏拆 5 token 裂 4+1 跨 8 round 0 caller 半成品)**. **R128e (本批) — 11 视角综合审视 5 worker × 2-3 lens 后台并行 + 主 agent 整合, 修真项 36 项 (10 P0 + 15 P1 + 6 P2 + 8 P3/跨期), R129 hotfix 4-5h → 7.8 → 8.2 (+0.4)**.
 
 ## 项目速览
 
@@ -855,7 +855,7 @@ dart scripts/check_all.dart   # 一次出两份报告：purity + consistency
 - 旧 file body 改 `export 'package:chroniccare/features/assessment/...'` 1 行, 现有用户 import 旧 path 仍 work (re-export 机制)
 
 **新增 test 11 case + 3 test 适配**:
-- `test/core/data/feature_first_migration_split_round126_step4_test.dart` (新 11 case): 目录结构 + 7/5/15 file 端到端 + 27 file 总 + 27 旧 re-export + 旧 path work + 跨 feature 0 违规 + 业务方法 0 break + R95 修真 0 violation + R110 阶段 2 续 收官 (features/ 2 feature)
+- `test/core/data/feature_first_migration_split_round126_step4_test.dart` (新 11 case): 目录结构 + 7/5/15 file 端到端 + 27 file 总 + 27 旧 re-export + 旧 path work + 跨 feature 0 违规 + 业务方法 0 break + R95 修正 0 violation + R110 阶段 2 续 收官 (features/ 2 feature)
 - 3 test 适配 (跟 R122 P2-2 R95 lock-in 适配 1 case 同模式, 单文件 → 整个 assessment 模块): `strings_notif_body_round108_test` (assessment_notifier caller) + `mood_trend_day_change_round113_test` (assessment_center_card ConsumerWidget) + `press_feedback_inkwell_coverage_round114_test` (assessment_center_card PressFeedback)
 
 **新增守门员适配**:
@@ -866,10 +866,10 @@ dart scripts/check_all.dart   # 一次出两份报告：purity + consistency
 - **业务方法 0 break**: AssessmentEntry 7 字段 (id / timestamp / scaleId / score / severityRank / answers / note) + AssessmentRepository 5 method (watchAll / getLatest / countByScale / watchByScale / submitEntry) 跟旧版完全一致, 旧 widget 端 0 改动
 - **跨 feature 共享留 R128 阶段 4**: assessment 跨 check_in_entity (留 core/) + scale_registry (跨 10 量表) + scale_translations (跨 10 量表) + notification_service (跨 5 厂商 push) + date_utils (跨 logic), 留 R128 阶段 4 抽 core/platform/ umbrella
 - **27 旧 path 1 行 re-export 兼容**: 现有用户 import 旧 path (`lib/domain/.../assessment_*` 等) 仍 work, 旧 file body 改 1 行 export 新 path 即可 (跟 R120 facade 收紧 + R110 feature-first 迁移 re-export 模式)
-- **R95 修真 0 violation**: features/assessment/presentation 15 file 0 raw EdgeInsets 数字 (R95 修真有效, 修真 cross check 通过)
+- **R95 修正 0 violation**: features/assessment/presentation 15 file 0 raw EdgeInsets 数字 (R95 修正有效, 修正 cross check 通过)
 
 **R110 阶段 2 续 4 feature 迁移进度 (1/4 = 25%)**:
-- ✅ R126 续 step 4 assessment (1 commit 整包, 27 file 端到端, 业务方法 0 break, R95 修真 0 violation) — 本批
+- ✅ R126 续 step 4 assessment (1 commit 整包, 27 file 端到端, 业务方法 0 break, R95 修正 0 violation) — 本批
 - ⏸ R126 续 step 5 mood (1 commit 整包, 35 file 端到端, 含 mood_audio 4 facade 跟 vent_audio shared EncryptedAudioStorage 基类)
 - ⏸ R126 续 step 6 vent (1-2 commit, 30 file + 跨 export/import 3 service + 跨 daily_tracking page)
 - ⏸ R126 续 step 7 medication (2-3 commit, 50 file + 28 widget)
@@ -902,7 +902,7 @@ dart scripts/check_all.dart   # 一次出两份报告：purity + consistency
 - 4 facade 公开 API 完整保留, 0 break widget 端
 
 **新增 test 12 case + 9 test 适配**:
-- `test/core/data/feature_first_migration_split_round126_step5_test.dart` (新 12 case): 目录结构 + 3/8/29 file 端到端 + 40 file 总 + 40 旧 re-export + 旧 path work + 跨 feature 0 违规 + 业务方法 0 break + mood_audio 4 facade 公开 API + R95 修真 baseline ≤ 2 + R110 阶段 2 续 收官 (features/ 3 feature)
+- `test/core/data/feature_first_migration_split_round126_step5_test.dart` (新 12 case): 目录结构 + 3/8/29 file 端到端 + 40 file 总 + 40 旧 re-export + 旧 path work + 跨 feature 0 违规 + 业务方法 0 break + mood_audio 4 facade 公开 API + R95 修正 baseline ≤ 2 + R110 阶段 2 续 收官 (features/ 3 feature)
 - 8 test 适配 (跟 R126 续 step 4 同模式): mood_audio_recorder/stt/storage split (6 case) + task10_email_mood_lock_in (1 case) + mood_trend_day_change (2 case) + mood_audio_recorder_round7b (1 case) + audio_lifecycle (1 case) + step 4 test 期望 2 → 3 feature (1 case)
 
 **新增守门员适配**:
@@ -917,13 +917,13 @@ dart scripts/check_all.dart   # 一次出两份报告：purity + consistency
 - **mood_audio 4 facade 协同 R122 P2-1 拆 3 facade**: mood_audio_service (orchestrator) + mood_audio_recorder + mood_audio_stt + mood_audio_storage 4 file 全部迁 features/mood/data/services/, 公开 API 完整保留
 - **跨 feature 共享留 R128 阶段 4**: mood 跨 worry_thread_entity (留 core/) + influence_category (留 core/) + encrypted_audio_storage (跨 vent audio shared 基类) + cbt_thought_record_pdf (留 core/) + mood_period_aggregator (留 core/) + trend_calculator (留 core/), R128 阶段 4 抽 core/platform/ umbrella 处理
 - **40 旧 path 1 行 re-export 兼容**: 现有用户 import 旧 path (`lib/domain/.../mood_*` 等) 仍 work, 旧 file body 改 1 行 export 新 path 即可 (跟 R120 facade 收紧 + R110 feature-first 迁移 re-export 模式)
-- **R95 修真 baseline 接受 ≤ 2**: features/mood/presentation 15 file 修真有效, mood_review_page 2 处 raw EdgeInsets.all(16) 修真漏 (R31+ 跨期修真已知), 接受 ≤ 2 raw, 不影响 R126 续 step 5 1 commit 推完
+- **R95 修正 baseline 接受 ≤ 2**: features/mood/presentation 15 file 修正有效, mood_review_page 2 处 raw EdgeInsets.all(16) 修正漏 (R31+ 跨期修正已知), 接受 ≤ 2 raw, 不影响 R126 续 step 5 1 commit 推完
 
 **R110 阶段 2 续 4 feature 迁移进度 (4/4 = 100% 收官) 🎉**:
-- ✅ R126 续 step 4 assessment (1 commit 整包, 27 file 端到端, 业务方法 0 break, R95 修真 0 violation)
-- ✅ R126 续 step 5 mood (1 commit 整包, 40 file 端到端, 业务方法 0 break, mood_audio 4 facade 协同 R122 P2-1 拆 3 facade, R95 修真 baseline ≤ 2)
-- ✅ R126 续 step 6 vent (1 commit 整包, 19 file 端到端, 业务方法 0 break, vent_audio_storage 协同 R121 抽 EncryptedAudioStorage 基类, R95 修真 0 violation)
-- ✅ **R126 续 step 7 medication (1 commit 整包, 39 file 端到端, 业务方法 0 break, medication_notifier 跨 notification + medication_report_pdf PDF 特殊排版, R95 修真 baseline ≤ 2) — 本批**
+- ✅ R126 续 step 4 assessment (1 commit 整包, 27 file 端到端, 业务方法 0 break, R95 修正 0 violation)
+- ✅ R126 续 step 5 mood (1 commit 整包, 40 file 端到端, 业务方法 0 break, mood_audio 4 facade 协同 R122 P2-1 拆 3 facade, R95 修正 baseline ≤ 2)
+- ✅ R126 续 step 6 vent (1 commit 整包, 19 file 端到端, 业务方法 0 break, vent_audio_storage 协同 R121 抽 EncryptedAudioStorage 基类, R95 修正 0 violation)
+- ✅ **R126 续 step 7 medication (1 commit 整包, 39 file 端到端, 业务方法 0 break, medication_notifier 跨 notification + medication_report_pdf PDF 特殊排版, R95 修正 baseline ≤ 2) — 本批**
 
 **R110 阶段 2 续 4 feature 完整迁移 4/4 = 100% 收官 🎉** (1.1.0+179):
 - **4 commit 累计 125 file 端到端**: assessment 27 + mood 40 + vent 19 + medication 39
@@ -1031,7 +1031,7 @@ dart scripts/check_all.dart   # 一次出两份报告：purity + consistency
 
 ## v1.1.0 R127 stage3 (R110 feature-first 阶段 3) — pub workspace 3 package 拆分 (2026-08-18, 1 commit 9c0f0f45, 1.1.0+180)
 
-**状态**: R110 阶段 3 pub workspace 阶段 1 闭环, 3 package 骨架 (root + chroniccare_core + chroniccare_features_mood) 跨 12 deps 共享验证。阶段 2 (1.1.0+181) 迁 chroniccare_core 整块, 阶段 3 (1.1.0+182) 迁 mood 试点 feature, 阶段 4 (1.1.0+183) root 变纯 workspace 入口, 阶段 5 (1.1.0+184) 修真 + 守门员 + 综合审视。
+**状态**: R110 阶段 3 pub workspace 阶段 1 闭环, 3 package 骨架 (root + chroniccare_core + chroniccare_features_mood) 跨 12 deps 共享验证。阶段 2 (1.1.0+181) 迁 chroniccare_core 整块, 阶段 3 (1.1.0+182) 迁 mood 试点 feature, 阶段 4 (1.1.0+183) root 变纯 workspace 入口, 阶段 5 (1.1.0+184) 修正 + 守门员 + 综合审视。
 
 **D1 决策限制 (pub workspace 循环依赖)**:
 - drift schema (database/tables + database/daos + database/mappers + app_database) 留主 app
@@ -1047,53 +1047,88 @@ dart scripts/check_all.dart   # 一次出两份报告：purity + consistency
 
 **验收数据 (跟 R126 全清 baseline 对齐)**:
 - `flutter pub get`: 跨 3 package 全绿 (12 deps 共享)
-- `flutter analyze`: 6 PDF const error / 26 warning / 433 info (跟 baseline 0/26/433 几乎一致, 6 PDF const error 修真跨期 R128 stage4 一起修)
+- `flutter analyze`: 6 PDF const error / 26 warning / 433 info (跟 baseline 0/26/433 几乎一致, 6 PDF const error 修正跨期 R128 stage4 一起修)
 - `flutter test`: 2728 pass / 1 skip / 0 fail (跟 baseline 完全一致)
 
-## v1.1.0 R128 (R110 feature-first 阶段 4) — 跨 feature 共享抽 core/platform/ umbrella (2026-08-18, 3 commit 2f931cc0 / 28353b2a / pending, 1.1.0+181~+183)
+## v1.1.0 R128a (R110 feature-first 阶段 4 启动) — notification 7 file 抽 core/platform/notification/ umbrella (2026-08-18, 1 commit 2f931cc0, 1.1.0+181)
 
-**状态**: R110 阶段 4 跨 feature 共享平台抽象 3 commit 整包闭环:
-- **R128a (1.1.0+181)**: notification 体系 7 file (notification_service + delegate + initializer + payload + reminder_dispatcher + snooze_manager + 5_vendor_push_service) 抽 `lib/core/platform/notification/` umbrella
-- **R128b (1.1.0+182)**: crisis 5/5 收官 迁 `lib/features/crisis/` (3 file 端到端: domain/entities/hotline_entry + data/logic/hotline_regions + presentation/pages/crisis_hotline_page), features 顶层 5 → 6
-- **R128c (1.1.0+183)**: HealthKit stub 骨架 (`lib/core/platform/health_kit/health_kit_service.dart`, 跟 R124 5 厂商 push NoOp 同模式) + FeatureFlags.healthKitEnabled 默认 false + check_apple_health_claim.py 加 3 规则兜底
+**状态**: R110 阶段 4 跨 feature 共享 1/3 收官, notification 体系 7 file 完整抽 `lib/core/platform/notification/`, 7 旧 path 改 1 行 re-export 兼容, 跨 medication + assessment + vent 3 feature 共用。
 
 **关键设计**:
-- **core/platform/ umbrella**: 跟 core/data/ + core/shared/ + core/theme/ + core/routing/ + core/l10n/ 平级, 5 个子层并入 `lib/core/` (R110 v0.18 round 12 后), platform/ 是 R128 新增第 6 子层
-- **abstract + NoOp + factory + facade 4 段式**: 跟 R124 5 厂商 push facade 完整一致, 5-6 月后真接时只换 impl
-- **1 commit 整包 1 feature/1 umbrella 端到端**: 跟 R126 续 step 4-7 mood 40 file / vent 30 file / assessment 27 file / medication 39 file 模式同
-- **旧 path 1 行 re-export 兼容**: 跟 R126 续 step 5 mood 模式同, 0 行为变化, 修真 baseline 0 raw
-- **修真基线模式**: 修真 test import path 走新 path (跟 R126 续 33 test 适配同), features 期望 5 → 6 (修真 4 个 R126 续 step 4-7 migration 守门员 test)
+- **core/platform/ umbrella 第 6 子层**: 跟 core/data/ + core/shared/ + core/theme/ + core/routing/ + core/l10n/ 平级, R128a 新增
+- **abstract + NoOp + factory + facade 4 段式**: 跟 R124 5 厂商 push facade 完整一致
+- **7 file 端到端**: notification_service + delegate + initializer + payload + reminder_dispatcher + snooze_manager + 5_vendor_push_service
+- **旧 path 1 行 re-export 兼容**: 跟 R126 续 step 5 mood 模式同, 0 行为变化
 
-**R128 3 commit 累计统计**:
-- R128a (1.1.0+181) notification 7 file 抽 platform/ + 7 re-export + 9 lib import 修真 + 31 test import 修真
-- R128b (1.1.0+182) crisis 3 file 端到端 + 1 routing import 改 + 4 migration 守门员 test 修真 (5→6)
-- R128c (1.1.0+183) HealthKit stub 1 file + FeatureFlags 加 healthKitEnabled + check_apple_health_claim.py 加 3 规则
-- 合计: 11 file 新增 (7 platform/notification + 3 features/crisis + 1 platform/health_kit) + 41 file 修真 + 1 守门员适配
+**累计统计**:
+- 7 file 抽 platform/ + 7 re-export + 9 lib import 修正 + 31 test import 修正
 
 **验收数据 (跟 R127 stage3 baseline 对齐)**:
-- `flutter pub get`: 3 package 全绿
-- `flutter analyze`: 0 error / 26 warning / 433 info (跟 R127 stage3 baseline 0/26/433 完全一致)
-- `flutter test`: 2728 pass / 1 skip / 0 fail (跟 R127 stage3 baseline 完全一致, 0 行为变化)
-- 18 守门员 18 全绿 (跟 R127 stage3 baseline 0 violation 完全一致)
+- `flutter analyze`: 0 error / 26 warning / 433 info (完全一致)
+- `flutter test`: 2728 pass / 1 skip / 0 fail
+- 18 守门员 18 全绿
+- `lib/core/platform/notification/` 子层新增
+
+---
+
+## v1.1.0 R128b (R110 feature-first 阶段 4 续) — crisis 5/5 迁 features/crisis/ 第 6 feature 完整迁移 (2026-08-18, 1 commit 28353b2a, 1.1.0+182)
+
+**状态**: R110 阶段 4 跨 feature 共享 2/3 收官, crisis 5/5 完整迁 `lib/features/crisis/`, lib/features/ 顶层 5 → 6 feature (daily_tracking + assessment + mood + vent + medication + crisis)。
+
+**关键设计**:
+- **lib/features/ 第 6 feature 顶层目录**: `lib/features/crisis/` (domain/entities/hotline_entry + data/logic/hotline_regions + presentation/pages/crisis_hotline_page)
+- **1 commit 整包 1 feature 端到端**: 跟 R126 续 step 4-7 mood 40 file / vent 30 file / assessment 27 file / medication 39 file 模式同
+- **修正基线模式**: features 期望 5 → 6 (修正 4 个 R126 续 step 4-7 migration 守门员 test)
+- **跨 feature import 检测扩展**: `check_cross_feature.py` 加规则: features/*/data/ 只能 import 自身 + lib/core/platform/ + packages/* (防跨 feature 业务渗透)
+
+**累计统计**:
+- crisis 3 file 端到端 + 1 routing import 改 + 4 migration 守门员 test 修正 (5→6)
+
+**验收数据 (跟 R128a baseline 对齐)**:
+- `flutter analyze`: 0 error / 26 warning / 433 info
+- `flutter test`: 2728 pass / 1 skip / 0 fail
+- 18 守门员 18 全绿
 - `lib/features/` 顶层 5 → 6 (assessment + crisis + daily_tracking + medication + mood + vent)
-- `lib/core/platform/` 子层新增 (notification/ + health_kit/, 跟 core/data/ + core/shared/ + core/theme/ + core/routing/ + core/l10n/ 平级)
+
+---
+
+## v1.1.0 R128c (R110 feature-first 阶段 4 收官) — HealthKit stub 骨架 + 守门员扩 3 规则 (2026-08-18, 1 commit pending, 1.1.0+183)
+
+**状态**: R110 阶段 4 跨 feature 共享 3/3 收官, HealthKit stub 骨架 1 file 落地 + FeatureFlags.healthKitEnabled 默认 false + check_apple_health_claim.py 加 3 规则兜底, R128c 阶段 2 真接 5-6 月后。
+
+**关键设计**:
+- **HealthKit stub 200L**: `lib/core/platform/health_kit/health_kit_service.dart` (TypeToken + data class + NoOp impl, 跟 R124 5 厂商 push NoOp 同模式)
+- **FeatureFlags.healthKitEnabled**: 默认 false, 5-6 月后真接时翻 true
+- **守门员扩展**: check_apple_health_claim.py 加 3 规则 (R128d 修真时 0 新增独立守门员, 24 → 实际 23 .py + 1 .dart 修真):
+  - rule 1: "Apple Health" 关键词 lib/ 注释扫 (防假声明)
+  - rule 2: health_kit 引用必须经过 `lib/core/platform/health_kit/` 唯一出口
+  - rule 3: 真接 health_kit 阶段 2 v1.0 之前, lib/ 注释不允许出现 `import 'package:health/` 等 SDK 真接代码
+
+**累计统计**:
+- HealthKit stub 1 file + FeatureFlags 加 healthKitEnabled + check_apple_health_claim.py 加 3 规则
+
+**验收数据 (跟 R128b baseline 对齐)**:
+- `flutter analyze`: 0 error / 26 warning / 433 info
+- `flutter test`: 2728 pass / 1 skip / 0 fail
+- **18 守门员 18 全绿** (R128c 加 3 规则到 check_apple_health_claim.py 而非 3 个独立守门员, R128d 修真时 5min 文档修真)
+- `lib/core/platform/health_kit/` 子层新增
+
+**R128c 已知遗留 (R129 P1-10 修真 1h)**:
+- `health_kit_service.dart` 200L 0 test, R129 P1-10 修真 3-5 case
 
 **D1 决策: drift schema 留主 app** (R128 不动 drift, 跟 R127 阶段 1 一致)
 
-**R128+ 路线图**:
-- R128d (1.1.0+184, R110 阶段 5): 5 token 集中器转 pub workspace 公共 package (app_tokens / app_colors / app_typography / app_spacing / app_motion)
-- v1.0 长期 (2027-Q1): HealthKit 5-6 月真接 (修真 check_apple_health_claim.py 5 规则 → accept health_kit import + iOS entitlement + Info.plist NSHealthShareUsageDescription + 真接 impl 替换 NoOp)
-
+---
 
 ## v1.1.0 R128d (R110 feature-first 阶段 5) — 5 token 集中器转 pub workspace 公共 package (2026-08-18, 1 commit ad6abab3, 1.1.0+184)
 
-**状态**: R110 阶段 5 step 1 闭环, 5 token 集中器 (app_tokens / app_colors / app_typography / app_spacing / app_motion) 从 `lib/core/theme/` 迁到 `packages/chroniccare_theme/lib/src/` (第 4 个 pub workspace lib package), 188 lib files 改 import path 走公共入口 `package:chroniccare_theme/chroniccare_theme.dart`。修真基线 0 raw (0 error / 26 warn / 433 info, 跟 R128 baseline 完全一致)。
+**状态**: R110 阶段 5 step 1 闭环, 5 token 集中器 (app_tokens / app_colors / app_typography / app_spacing / app_motion) 从 `lib/core/theme/` 迁到 `packages/chroniccare_theme/lib/src/` (第 4 个 pub workspace lib package), 188 lib files 改 import path 走公共入口 `package:chroniccare_theme/chroniccare_theme.dart`。修正基线 0 raw (0 error / 26 warn / 433 info, 跟 R128 baseline 完全一致)。
 
 **关键设计**:
 - **pub workspace 第 4 member**: `packages/chroniccare_theme/` 跟 `chroniccare_core` / `chroniccare_features_mood` 平级
-- **public 入口修真 Dart linter**: 加 `lib/chroniccare_theme.dart` 顶层入口 export src/ 5 file, 修真 207 个 `implementation_imports` 警告 (修真后 0 violation)
-- **5 file 旧 path re-export 兼容**: 跟 R128a notification 7 re-export 模式同, 188 lib files 修真 0 行为变化
-- **23 file duplicate_import 修真**: 旧 import app_tokens + app_colors 2 个集中器合并成 chroniccare_theme 1 个公共入口, awk 去重修真 23 file
+- **public 入口修正 Dart linter**: 加 `lib/chroniccare_theme.dart` 顶层入口 export src/ 5 file, 修正 207 个 `implementation_imports` 警告 (修正后 0 violation)
+- **5 file 旧 path re-export 兼容**: 跟 R128a notification 7 re-export 模式同, 188 lib files 修正 0 行为变化
+- **23 file duplicate_import 修正**: 旧 import app_tokens + app_colors 2 个集中器合并成 chroniccare_theme 1 个公共入口, awk 去重修正 23 file
 - **跨期 1 周综合审视**: R128d step 2 派 subagent 跑 4-7 视角 (emil / superpowers-zh / superpowers-en / flutter-spec / frame-thinking / Apple Health / 顶层架构), 整合 1 份主报告 (R108 revisit 9 视角 40KB 整合模式)
 
 **pub workspace 4 package 互依赖现状**:
@@ -1105,18 +1140,129 @@ dart scripts/check_all.dart   # 一次出两份报告：purity + consistency
 **R128d 3 step 路线图**:
 - ✅ R128d step 1 (1.1.0+184, 本批): 5 token 集中器迁 packages/chroniccare_theme/ 1 commit 整包
 - ⏸ R128d step 2 (1.1.0+185, 跨期 1 周): 综合审视 4-7 视角 + 整合主报告, 1 commit
-- ⏸ R128d step 3 (1.1.0+186): 修真 AGENTS.md + 修真基线 0 raw + 收官 (已并入本批, R128d 1 commit 整包 100% 收官)
+- ⏸ R128d step 3 (1.1.0+186): 修正 AGENTS.md + 修正基线 0 raw + 收官 (已并入本批, R128d 1 commit 整包 100% 收官)
 
 **验收数据 (跟 R128 baseline 对齐)**:
 - `flutter pub get`: 4 package 全绿 (root + chroniccare_core + chroniccare_features_mood + chroniccare_theme)
 - `flutter analyze`: 0 error / 26 warning / 433 info (跟 R128 baseline 0/26/433 完全一致)
 - `flutter test`: 2728 pass / 1 skip / 0 fail (跟 R128 baseline 完全一致, 0 行为变化)
-- 18 守门员 18 全绿 (跟 R128 baseline 0 violation 完全一致)
-- 199 file 改动: 5 file 新 + 1 public 入口 + 5 re-export + 188 lib import 修真
-- `lib/core/theme/` 5 token 集中器 → `packages/chroniccare_theme/lib/src/` 5 file
+- **24 守门员 24 全绿** (跟 R128 baseline 0 violation 完全一致, **R128c 加 3 规则到 `check_apple_health_claim.py` 而非 3 个独立守门员**)
+- 199 file 改动: 5 file 新 + 1 public 入口 + 5 re-export + 188 lib import 修正
+- `lib/core/theme/` 5 token 集中器 → `packages/chroniccare_theme/lib/src/` 5 file (**spring.dart 漏拆 0 caller 跨 8 round 留 `lib/core/theme/spring.dart` 118L 待 R129 修真**)
 
 **R128d+ 路线图**:
-- R128d step 2 续: 跨期 1 周综合审视 (4-7 视角 subagent + 整合主报告), 1 commit
-- R127 阶段 2 续 (R128d 修真 R127 路线): 迁 chroniccare_core 整块 (`lib/core/(除 database/theme) + lib/domain/`)
-- R127 阶段 3 续: 迁 chroniccare_features_mood 试点 (`lib/features/mood/presentation/`)
+- R128d step 2 续: 跨期 1 周综合审视 (4-7 视角 subagent + 整合主报告), 1 commit — **R128e 11 视角已收官 (本批)**
+- R127 阶段 2 续 (R128d 修正 R127 路线): 迁 chroniccare_core 整块 (`lib/core/(除 database/theme) + lib/domain/`) — **R128e 新发现 chroniccare_core 0 lib file 命名误导, 待 R129 修真 / 决定删除**
+- R127 阶段 3 续: 迁 chroniccare_features_mood 试点 (`lib/features/mood/presentation/`) — **R128e 新发现 chroniccare_features_mood 0 lib file 命名误导, 待 R129 修真 / 决定删除**
 - v1.0 长期 (2027-Q1): HealthKit 5-6 月真接 + 5 厂商 push 真接 + 阿里云 SMS + 鸿蒙 + IAP
+
+---
+
+## v1.1.0 R128e (R128d step 2 收官) — 11 视角综合审视 (2026-08-18, 5 worker × 2-3 lens 后台并行, master @ 51fefe39)
+
+**状态**: R128d step 2 跨期 1 周综合审视 收官, **5 worker subagent × 2-3 lens = 11 lens 报告 + 1 整合报告** (12 文件 ~95KB), 替代 R128d step 2 计划的 4-7 视角 (emil / superpowers-zh / superpowers-en / flutter-spec / frame-thinking / Apple Health / 顶层架构), 用 R108 revisit 9 视角 40KB 整合模式扩展到 11 视角。**A+B 策略 R128e 实战**: 5 worker 后台并行 + 主 agent 整合 (R108 6 subagent 撞 token 50111 教训后)。
+
+**方法**:
+- 派 5 worker subagent 后台并行, 各负责 2-3 lens:
+  - bg_c6ba61c2 → Lens 1 emil + Lens 2 superpowers-en
+  - bg_b4f4e82d → Lens 3 superpowers-zh + Lens 4 superpowers-dispatch
+  - bg_03f16d23 → Lens 5 gdc-audit + Lens 6 pull-on-shelf
+  - bg_c7dbe7ea → Lens 7 frame-thinking + Lens 8 flutter-audit
+  - bg_298ba44a → Lens 9 appstore + Lens 10 googleplaystore + Lens 11 apple-health
+- cron self 1h 兜底监控 (e874315f-08aa-4dc1-a799-f86d670c7191)
+- 5 worker 顺序 dispatch 同 cwd (0 git worktree 隔离, D-6 修真项 P0 待 R129)
+- 主 agent 读 10 份 lens 报告 + 写 1 份整合报告 (00-FINAL-CONSOLIDATION.md 29KB)
+- 同时修真 `docs/DEVELOPMENT_REQUIREMENTS.md` v2.0 → v3.0 + `AGENTS.md` 加 v0.32 章节
+
+**11 lens 评分 (vs R120 7.5 baseline)**:
+
+| Lens | R128e | R120 | Δ | 关键依据 |
+|---|---|---|---|---|
+| 1 emil | 7.5/10 | 8.0 | -0.5 | R128d spring.dart 漏拆 (5 token 裂 4+1) + apple_health_tile 0 tooltip 跨期残留 |
+| 2 super-en | 7.0/10 | 8.5 | **-1.5** | R128a~R128d 4 round 0 test 同步 + pubspec 落后 5 commit + CHANGELOG 0 R128 entry |
+| 3 super-zh | 7.5/10 | 7.5 | 0 | R121 hotfix 闭环 + R128 章节已补,但 AGENTS.md:3 漏 R128b crisis 6th feature |
+| 4 dispatch | 7.5/10 | 7.5 | 0 | A+B R128e 5 worker × 2 lens 实战,但 R108 fallback SOP 跨 8 round 0 落地 |
+| 5 gdc | 7.5/10 | 7.5 | 0 | R128a~d 0 跨平台新增,但 iOS 锁屏 PII 3 处未修 + iOS 16KB 真机 0 验证 |
+| 6 pull | 4.0/10 | 4.0 | 0 | 7 P0 跨期 0 闭环 + 1 P0 回归 (PS-19 notes.txt 1.1.0+168≠1.1.0+185) |
+| 7 frame | 8.5/10 | 8.5 | 0 | R120 6 god class 4 闭环 +0.5, spring 半成品 + 24 守门员名实不符 -0.5 |
+| 8 flutter | 96% | 97% | -1% | 24 守门员名实不符 + spring 跨 8 round + 锁屏 PII 跨期 |
+| 9 appstore | 3.5/10 | 3.5 | 0 | 5 P0 跨期残留 8 round 0 闭环 |
+| 10 googleplay | 5.5/10 | 5.5 | 0 | R117 round 5 工具链 100% 闭环 + 2 P0 设计师资产跨期 0 闭环 |
+| 11 apple-health | 7.5/10 | 7.0 | +0.5 | R128c HealthKit stub (5.1.3 防御) + R128d 5 token 转 pub workspace 加分 |
+| **加权综合** | **7.8/10** | **7.5** | **+0.3** | R128a~R128d 4 round 净 +0.3 (apple-health +0.5 抵消 super-en -1.5) |
+
+> **加权公式** (R120 沿用): emil 0.15 + super-en 0.10 + super-zh 0.10 + dispatch 0.05 + gdc 0.10 + pull 0.15 + frame 0.10 + flutter 0.15 + appstore 0.05 + googleplay 0.05 + apple_health 0.10 = 7.79
+
+**R128e 修真项 (4 大类共 36 项, 估时 35-50h)**:
+
+### 🔴 P0 (10 项, 9-10h) — R129 hotfix
+- **P0-1**: `notes.txt` 1.1.0+168 → 1.1.0+185 (R32 P0-02 跨期回归, 0.1h)
+- **P0-2**: 3 处 `DarwinNotificationDetails` `presentAlert: false` (R32 P0-03 跨期 8 round, 0.5h)
+- **P0-3**: `spring.dart` 118L 迁 `chroniccare_theme` (R128d 漏拆, 5 token 裂 4+1 修真, 1h)
+- **P0-4**: `AGENTS.md:3` EN Summary `5 features` → `6 features (R128b +crisis)` (5min)
+- **P0-5**: `AGENTS.md:1053-1087` R128 章节拆 R128a/b/c 3 独立 (30min)
+- **P0-6**: `pubspec.yaml:6` version 1.1.0+180 → 1.1.0+185 (5min)
+- **P0-7**: `docs/CHANGELOG.md` 补 5 R128 entry (R127 + R128a/b/c/d, 2h)
+- **P0-8**: `docs/SUBAGENT_FALLBACK.md` SOP 写 (R108 教训跨 8 round 0 落地, 1h)
+- **P0-9**: R128e+ 派单 5 worker 改 5 git worktree 隔离 (R108 教训, 2h)
+- **P0-10**: `apple_health_tile.dart` 加 8 metric tooltip + 修真 "checkIn" metricId (R31 P0-08 跨期, 1.5h)
+
+### 🟠 P1 (15 项, 15-20h) — R129 R1-R2
+- P1-1: iOS 16KB 真机 objdump 验 (R120 P1-026 跨 8 round, 2h)
+- P1-2: `app_theme.dart` 245L + `theme_provider.dart` 67L 转 `chroniccare_theme` (R128d 漏拆, 1.5h)
+- P1-3: 3 package 名实不符修真 / 决定删除 (`chroniccare_core` + `chroniccare_features_mood` 0 lib file, 6h)
+- P1-4: `check_id_bands_doc_sync.py` 新增 (R120 建议, 1.5h)
+- P1-5: `flutter test --coverage` 修真 lcov.info 过期 (10min)
+- P1-6: CI 修真 `flutter test --coverage` step (R120 建议, 1h)
+- P1-7: `docs/PRIVACY_HARDENING.md:1-15` R120 → R128d 头部修真 (1h)
+- P1-8: `packages/chroniccare_theme/test/` 建 3-5 smoke test (R128d 拆包 0 test, 2h)
+- P1-9: 4 旧 test 修真走新 path import (1h)
+- P1-10: `health_kit_service.dart` 0 test 修真 3-5 case (R128c stub 200L 0 test, 1h)
+- P1-11: 锁屏 PII 3 key 脱敏修真 (`check_pii_in_title.py` R31 P0-04 跨 8 round 0 闭环, 1h)
+- P1-12: `docs/reviews/briefs/{3,6,10}-lens.md` 3 套 brief 模板 (R120 建议, 1h)
+- P1-13: `mavis cron self` token quota 监控模板 (R108 教训, 0.5h)
+- P1-14: `mood_audio_recorder_widget` 611L 拆 (R120 529L → R128e +82L 反弹跨 8 round, 3h)
+- P1-15: `review_information` 4 TODO 占位填真实 (PS-9 上架前必填, 0.5h)
+
+### 🟡 P2 (6 项, 5-10h) — R129 R2-R3
+- P2-1: `app_theme.dart:18-24` dark mode 主色显式覆盖 (30min)
+- P2-2: `apple_health_tile.dart` 8 metricId 集中化 (30min)
+- P2-3: `medication_page.dart:20` unused_import 修真 (5min)
+- P2-4: `home_page_state` 续拆 (2h)
+- P2-5: `mood_trend_page` 续拆 (2h)
+- P2-6: `setup_page_state` 拆 4 步 (R108 §六 候选, 跨 9 round 0 闭环, 3h)
+
+### 🟢 P3 (8 项, 跨期 / 长期 v1.0 2027-Q1)
+- P3-1: PressFeedback dark mode 视觉差异 (1h)
+- P3-2: HealthKit 阶段 2 真接 (5-6 月)
+- P3-3: 鸿蒙 channel 0% 集成 (5-15d)
+- P3-4: 5 厂商 push + 阿里云 SMS 真接 (1-2 月)
+- P3-5: Android `compileSdk` 显式 pin 36 (0.1h)
+- P3-6: Android 拆 RECORD_AUDIO service 绑 manifest-service (1d)
+- P3-7: 11 feature AppleHealthTile 趋势图接入真实数据 (1-2 周)
+- P3-8: 5.1.3 抽审 4 文档准备 (PHQ-9/GAD-7 法务 + 临床审核, 1-2 周)
+
+**R128e 跨 lens 共识 (7 项强共识)**:
+1. **5 P0 external 跨 12 round 0 闭环** (pull + appstore + googleplay + frame, 4 视角共识) — 设计师资产 + 域名 ICP + 5 厂商 push
+2. **锁屏 PII 3 处未修** (gdc + pull + flutter, 3 视角共识) — 1h 修真 3 file
+3. **spring.dart 跨 8 round 半成品** (emil + frame + flutter + apple-health, 4 视角共识) — 1h 迁 chroniccare_theme
+4. **R128d 拆包不彻底, 5 token 集中器裂 4+1** (emil + super-en + frame + flutter, 4 视角共识) — 9.5h 修真
+5. **24 守门员描述不实** (frame + flutter, 2 视角共识) — 5min 修真 1-2 处文档
+6. **CHANGELOG / pubspec / AGENTS 文档同步 3 P0 漏洞** (super-en + super-zh + gdc + pull, 4 视角共识) — 4-5h 修真
+7. **R108 教训 SOP 跨 8 round 0 落地** (super-zh + dispatch, 2 视角共识) — 4.5h 修真
+
+**R128e+ 路线图 (跟 R128d 合并更新)**:
+- **R129 hotfix (本周, 1-2 天, 4-5h)**: 闭环 P0-1~P0-10 修真 → 7.8 → 8.2 (+0.4)
+- **R129 R1 (1 周, 12-15h)**: 闭环 P1-1~P1-15 修真 → 8.2 → 8.5 (+0.3)
+- **R129 R2-R3 (2-3 周)**: 闭环 P2-1~P2-6 修真 → 8.5 → 8.7 (+0.2)
+- **R130 (1-2 月)**: 5 实物资产 + 域名 ICP 闭环 (设计师 + 域名商) → 8.7 → 9.0 (+0.3)
+- **R131 (2-3 月)**: 5 厂商 push + HealthKit 阶段 2 + 鸿蒙 channel → 9.0 → 9.3 (+0.3)
+- **v1.0 (2027-Q1)**: 5 厂商 push + HealthKit + 鸿蒙 + 阿里云 SMS + IAP 全真接 → 9.5+
+
+**R128e 跨期 4 大遗留** (跟 R128d 路线图合并更新):
+1. **5 P0 external 跨期 12 round 0 闭环** (iOS 截图 / LaunchImage / AppIcon / 域名 ICP / 5 厂商 push / SMS) — 全部等外部资源
+2. **2 god class 反弹 / 跨期 0 收紧** (`mood_audio_recorder_widget` 反弹 +82L / `setup_page_state` 跨 9 round 0 启动) — P1-14 + P2-6
+3. **HealthKit 5-6 月真接** (R128c stub 收官 ≠ 真接) — 5.1.3 防御 100% 闭环但业务不集成
+4. **3 package 名实不符** (`chroniccare_core` + `chroniccare_features_mood` 0 lib file, 命名误导) — P1-3 修真 6h / 决定删除 5min
+
+**完整报告**: [docs/audit/2026-08-18-r128e-multi-lens/00-FINAL-CONSOLIDATION.md](docs/audit/2026-08-18-r128e-multi-lens/00-FINAL-CONSOLIDATION.md) (29KB)

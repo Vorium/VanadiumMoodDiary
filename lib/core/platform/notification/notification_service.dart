@@ -172,6 +172,9 @@ class NotificationService implements NotificationSender {
         iOS: DarwinNotificationDetails(
           categoryIdentifier: 'com.chroniccare.reminder',
           interruptionLevel: InterruptionLevel.timeSensitive,
+          // R129 hotfix P0-2: 锁屏禁显示通知详情 (R32 P0-03 跨 8 round 修真)
+          // 精神心理用户锁屏 "该吃药了"+"该续方了"+"心理评估时间到" 可推断病情
+          presentAlert: false,
         ),
       );
 

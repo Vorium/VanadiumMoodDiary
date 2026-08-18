@@ -97,26 +97,31 @@ class AppleHealthTile extends StatelessWidget {
       // B2-6: tile 内容 clamp textScaler, 防固定高容器挤压
       child: MediaQuery.withClampedTextScaling(
         maxScaleFactor: maxTextScaler,
-        child: Container(
-          height: tileHeight,
-          width: tileWidth,
-          decoration: BoxDecoration(
-            color: bgColor,
-            borderRadius: BorderRadius.circular(AppTokens.radiusTile),
-          ),
-          padding: const EdgeInsets.symmetric(
-            horizontal: AppTokens.spacingMd,
-            vertical: AppTokens.spacingMd,
-          ),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              // 左: metric icon (28pt, metric 色)
-              Icon(
-                _iconFor(metricId),
-                color: metricColor,
-                size: 28,
-              ),
+        child: Tooltip(
+          // R129 P0-10 (R128e 综合审视修真): tooltip "应用内数据, 不上 Apple Health"
+          // R31 P0-08 跨 8 round 修真 — 视觉 vs 数据 gap 防御 (R128c 5.1.3 used-but-not-declared
+          // 防御一致战线, emotion-first 0 HealthKit 集成, 避免用户疑惑 "为何没数据")
+          message: '应用内数据，不上 Apple Health',
+          child: Container(
+            height: tileHeight,
+            width: tileWidth,
+            decoration: BoxDecoration(
+              color: bgColor,
+              borderRadius: BorderRadius.circular(AppTokens.radiusTile),
+            ),
+            padding: const EdgeInsets.symmetric(
+              horizontal: AppTokens.spacingMd,
+              vertical: AppTokens.spacingMd,
+            ),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                // 左: metric icon (28pt, metric 色)
+                Icon(
+                  _iconFor(metricId),
+                  color: metricColor,
+                  size: 28,
+                ),
               const SizedBox(width: AppTokens.spacingSm),
               // 中: label + value — FittedBox 让长 label 缩字不溢出
               Expanded(
@@ -153,6 +158,7 @@ class AppleHealthTile extends StatelessWidget {
             ],
           ),
         ),
+      ),
       ),
     );
   }
