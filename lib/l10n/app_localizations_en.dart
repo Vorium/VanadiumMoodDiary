@@ -4236,6 +4236,15 @@ class AppLocalizationsEn extends AppLocalizations {
   String get ventTagOther => 'Other';
 
   @override
+  String get ventTagCategoryWorkLife => 'Work & Study';
+
+  @override
+  String get ventTagCategoryEmotionalLife => 'Relationships';
+
+  @override
+  String get ventTagCategoryWellBeing => 'Well-being';
+
+  @override
   String get statusPhraseLow1 => 'A little sad';
 
   @override

@@ -4059,6 +4059,15 @@ class AppLocalizationsZh extends AppLocalizations {
   String get ventTagOther => '其他';
 
   @override
+  String get ventTagCategoryWorkLife => '学习工作';
+
+  @override
+  String get ventTagCategoryEmotionalLife => '情感生活';
+
+  @override
+  String get ventTagCategoryWellBeing => '身心健康';
+
+  @override
   String get statusPhraseLow1 => '有点难过';
 
   @override
@@ -8435,6 +8444,15 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
 
   @override
   String get ventTagOther => '其他';
+
+  @override
+  String get ventTagCategoryWorkLife => '學習工作';
+
+  @override
+  String get ventTagCategoryEmotionalLife => '情感生活';
+
+  @override
+  String get ventTagCategoryWellBeing => '身心健康';
 
   @override
   String get statusPhraseLow1 => '有點難過';

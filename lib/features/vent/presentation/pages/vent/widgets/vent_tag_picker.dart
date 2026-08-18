@@ -47,7 +47,54 @@ class _VentTagPickerState extends State<VentTagPicker> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    final allTags = {...VentTagLibrary.presetTags, ...widget.selected};
+    final customTags = widget.selected
+        .where((t) => !VentTagLibrary.presetTags.contains(t))
+        .toSet();
+
+    String categoryLabel(VentTagCategory cat) {
+      switch (cat) {
+        case VentTagCategory.workLife:
+          return l10n.ventTagCategoryWorkLife;
+        case VentTagCategory.emotionalLife:
+          return l10n.ventTagCategoryEmotionalLife;
+        case VentTagCategory.wellBeing:
+          return l10n.ventTagCategoryWellBeing;
+      }
+    }
+
+    Widget buildCategoryChips(VentTagCategory cat) {
+      final tags = VentTagLibrary.tagsInCategory(cat);
+      if (tags.isEmpty) return const SizedBox.shrink();
+      return Padding(
+        padding: const EdgeInsets.only(bottom: AppTokens.spacingXs),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // 分类小标题 (R128e 论文 2 吕沛强 §2.1.1 优化: 树状分类)
+            Text(
+              categoryLabel(cat),
+              style: AppTokens.textStyleCaption(context).copyWith(
+                color: AppTokens.textHintColor(context),
+              ),
+            ),
+            const SizedBox(height: AppTokens.spacingXxs),
+            Wrap(
+              spacing: AppTokens.spacingXs,
+              runSpacing: 4,
+              children: [
+                for (final tag in tags)
+                  FilterChip(
+                    label: Text(localizedVentTag(context, tag)),
+                    selected: widget.selected.contains(tag),
+                    onSelected: (_) => _toggle(tag),
+                  ),
+              ],
+            ),
+          ],
+        ),
+      );
+    }
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -56,18 +103,38 @@ class _VentTagPickerState extends State<VentTagPicker> {
           style: AppTokens.textStyleLabelStrong(context),
         ),
         const SizedBox(height: AppTokens.spacingXs),
-        Wrap(
-          spacing: AppTokens.spacingXs,
-          runSpacing: 4,
-          children: [
-            for (final tag in allTags)
-              FilterChip(
-                label: Text(localizedVentTag(context, tag)),
-                selected: widget.selected.contains(tag),
-                onSelected: (_) => _toggle(tag),
-              ),
-          ],
-        ),
+        for (final cat in VentTagLibrary.categoryOrder)
+          buildCategoryChips(cat),
+        // 自定义标签 (R128e: 单独一组, 走 wellBeing 分类逻辑)
+        if (customTags.isNotEmpty) ...[
+          Padding(
+            padding: const EdgeInsets.only(bottom: AppTokens.spacingXs),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  categoryLabel(VentTagCategory.wellBeing),
+                  style: AppTokens.textStyleCaption(context).copyWith(
+                    color: AppTokens.textHintColor(context),
+                  ),
+                ),
+                const SizedBox(height: AppTokens.spacingXxs),
+                Wrap(
+                  spacing: AppTokens.spacingXs,
+                  runSpacing: 4,
+                  children: [
+                    for (final tag in customTags)
+                      FilterChip(
+                        label: Text(localizedVentTag(context, tag)),
+                        selected: true,
+                        onSelected: (_) => _toggle(tag),
+                      ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ],
         const SizedBox(height: AppTokens.spacingXs),
         TextField(
           controller: _customCtrl,

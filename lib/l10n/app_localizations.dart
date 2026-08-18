@@ -7542,6 +7542,24 @@ abstract class AppLocalizations {
   /// **'其他'**
   String get ventTagOther;
 
+  /// No description provided for @ventTagCategoryWorkLife.
+  ///
+  /// In zh, this message translates to:
+  /// **'学习工作'**
+  String get ventTagCategoryWorkLife;
+
+  /// No description provided for @ventTagCategoryEmotionalLife.
+  ///
+  /// In zh, this message translates to:
+  /// **'情感生活'**
+  String get ventTagCategoryEmotionalLife;
+
+  /// No description provided for @ventTagCategoryWellBeing.
+  ///
+  /// In zh, this message translates to:
+  /// **'身心健康'**
+  String get ventTagCategoryWellBeing;
+
   /// No description provided for @statusPhraseLow1.
   ///
   /// In zh, this message translates to:
