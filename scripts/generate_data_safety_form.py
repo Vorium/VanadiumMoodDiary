@@ -1,13 +1,15 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-v0.27 R72: Play Console Data Safety Form JSON 模板生成器
+R128e+ round 12: Play Console Data Safety Form JSON 模板生成器 (emotion-first 重命名)
 
 背景:
 - R68 googleplay 报告 GP-P0-7 阻塞: Data Safety Form 0 维护
-- 4 大类必填 (账号 / 设备 / 应用活动 / 个人信息) + health data 勾
+- 4 大类必填 (账号 / 设备 / 应用活动 / 个人信息) + Health info 勾 (Play Console 必填类目)
 - 之前需用户手动填, 容易漏
 - R72 脚本化: 自动从 PrivacyInfo.xcprivacy + privacy_policy.md 解析 + 生成 JSON 模板
+- R128e+ round 12: emotion-first 重命名 — 自定位从 "Health Apps" 改为 "Personal Wellness App",
+  Play Console 类目值 'Health info' 保留 (Google 官方分类术语, 不可改)
 
 用法:
   python scripts/generate_data_safety_form.py
@@ -69,11 +71,13 @@ def parse_privacy_info_xcprivacy(path: Path) -> list:
     return result
 
 
-def build_health_data_section() -> dict:
-    """build health data section (自我评估量表 + medication + mood)
+def build_wellness_data_section() -> dict:
+    """build wellness data section (自我评估量表 + medication + mood)
 
     GP-R112-03: 去 PHQ-9/GAD-7 点名 — prod 下 phqGad7I18nEnabled=false,
     实际露 8 量表 (ISI/PSS/WHODAS/ASRM/level2×4), 文案写通用措辞。
+    R128e+ round 12: emotion-first 重命名 — function/JSON-key 从 health → wellness,
+    category 值 'Health info' 保留 (Play Console 官方类目术语)。
     """
     return {
         'category': 'Health info',
@@ -86,7 +90,7 @@ def build_health_data_section() -> dict:
         'encrypted_at_rest': True,
         'user_can_request_deletion': True,
         'collected_for_functionality': True,
-        'notes': 'Health data 仅本地存储 (SQLCipher AES-256 + FlutterSecureStorage Keychain), 零云端, 零共享。',
+        'notes': 'Personal wellness data 仅本地存储 (SQLCipher AES-256 + FlutterSecureStorage Keychain), 零云端, 零共享。',
     }
 
 
@@ -131,7 +135,7 @@ def main():
     print()
 
     pi = parse_privacy_info_xcprivacy(privacy_info)
-    health = build_health_data_section()
+    wellness = build_wellness_data_section()
     audio = build_audio_data_section()
     deletion = build_deletion_endpoint()
     app_version = parse_pubspec_version(project_root)
@@ -167,12 +171,12 @@ def main():
                 'types': [],
                 'purpose': '未收集 — emergencyContactEnabled=false, 紧急联系人功能全 gate (无任何入口)。v1.0 SMS 真接时改 collected=True 并更新 types。',
             },
-            'health_info': health,
+            'wellness_info': wellness,
             'audio_files': audio,
         },
         'data_shared': {
             'shared_with_third_parties': False,
-            'notes': 'v0.27 R68: 失联通知业务整体暂停 (FeatureFlags.emergencyContactEnabled=false), 不触发任何第三方 SMS / Email 触达。Health data 仅本地存储, 零云端, 零共享。',
+            'notes': 'v0.27 R68: 失联通知业务整体暂停 (FeatureFlags.emergencyContactEnabled=false), 不触发任何第三方 SMS / Email 触达。Personal wellness data 仅本地存储, 零云端, 零共享。',
         },
         'data_security_practices': {
             'data_encrypted_in_transit': True,
@@ -235,14 +239,14 @@ def main():
 - 用户可请求删除: {form['data_collected']['audio_files']['user_can_request_deletion']}
 - 备注: {form['data_collected']['audio_files']['notes']}
 
-### 健康信息 (Health)
+### 健康信息 (Health / Personal Wellness)
 - 收集: ✅
 - 子类:
-{chr(10).join('  - ' + s for s in form['data_collected']['health_info']['subcategories'])}
-- 加密传输: {form['data_collected']['health_info']['encrypted_in_transit']}
-- 加密存储: {form['data_collected']['health_info']['encrypted_at_rest']}
-- 用户可请求删除: {form['data_collected']['health_info']['user_can_request_deletion']}
-- 备注: {form['data_collected']['health_info']['notes']}
+{chr(10).join('  - ' + s for s in form['data_collected']['wellness_info']['subcategories'])}
+- 加密传输: {form['data_collected']['wellness_info']['encrypted_in_transit']}
+- 加密存储: {form['data_collected']['wellness_info']['encrypted_at_rest']}
+- 用户可请求删除: {form['data_collected']['wellness_info']['user_can_request_deletion']}
+- 备注: {form['data_collected']['wellness_info']['notes']}
 
 ## 2. 共享数据
 

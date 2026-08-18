@@ -1,7 +1,9 @@
 """v0.30 R108: Data Safety Form 脚本 lock-in 测试
 
 验证 R72 `generate_data_safety_form.py` 仍存在 + 关键内容完整 + 能跑通。
-R108 增量: 加 v0.30 版本号断言 + health_info/audio/contacts 子类覆盖。
+R108 增量: 加 v0.30 版本号断言 + wellness_info/audio/contacts 子类覆盖。
+R128e+ round 12: JSON key 从 health_info → wellness_info (emotion-first 重命名,
+category value 'Health info' 保留为 Play Console 官方类目术语)。
 """
 import re
 import subprocess
@@ -33,9 +35,9 @@ def test_script_contains_v030_or_later_marker() -> None:
 
 
 def test_script_covers_5_categories() -> None:
-    """脚本应覆盖 5 大类 (account / device / app_activity / personal / health)"""
+    """脚本应覆盖 5 大类 (account / device / app_activity / personal / wellness)"""
     content = SCRIPT.read_text(encoding="utf-8")
-    expected = ["account_info", "device_info", "app_activity", "personal_info", "health_info"]
+    expected = ["account_info", "device_info", "app_activity", "personal_info", "wellness_info"]
     for cat in expected:
         assert f"'{cat}'" in content or f'"{cat}"' in content, \
             f"脚本应覆盖 '{cat}' 类别 (Play Console 7 大类中本项目有内容的 5 类)"
@@ -118,8 +120,8 @@ def test_script_runs_without_error() -> None:
     assert "data_shared" in form, "JSON 应含 data_shared"
     assert "data_security_practices" in form, "JSON 应含 data_security_practices"
     assert "data_deletion" in form, "JSON 应含 data_deletion"
-    assert form["data_collected"]["health_info"]["encrypted_at_rest"] is True, \
-        "Health info 必填加密 at rest"
+    assert form["data_collected"]["wellness_info"]["encrypted_at_rest"] is True, \
+        "wellness_info (category='Health info') 必填加密 at rest"
 
 
 if __name__ == "__main__":
