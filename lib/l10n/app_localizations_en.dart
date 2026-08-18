@@ -961,6 +961,15 @@ class AppLocalizationsEn extends AppLocalizations {
   String get moodTagLowEnergy => 'Low energy';
 
   @override
+  String get moodTagSmallJoy => 'Small joy';
+
+  @override
+  String get moodTagGrateful => 'Grateful';
+
+  @override
+  String get moodTagProgress => 'Made progress';
+
+  @override
   String get moodNoteLabel => 'Note (optional)';
 
   @override
@@ -2107,6 +2116,11 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get dayDetailTempMed => 'Temp dose';
+
+  @override
+  String dayDetailWorryCount(int count) {
+    return 'Wrote $count worry(ies) on that day';
+  }
 
   @override
   String get dayDetailPhq9 => 'PHQ-9 Mood Check';

@@ -15,6 +15,8 @@ import 'package:chroniccare_theme/chroniccare_theme.dart';
 import 'package:chroniccare/domain/entities/check_in_entity.dart';
 import 'package:chroniccare/domain/entities/medication_entity.dart';
 import 'package:chroniccare/domain/entities/mood_entry_entity.dart';
+import 'package:chroniccare/domain/entities/worry_thread_entity.dart';
+import 'package:chroniccare/domain/logic/date_utils.dart';
 import 'package:chroniccare/domain/logic/day_detail.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/presentation/pages/trend/widgets/trend_event_row.dart';
@@ -31,12 +33,17 @@ class DayDetailCard extends StatelessWidget {
   final List<CheckInEntity> allCheckIns;
   final List<MoodEntryEntity> moodEntries;
   final List<MedicationEntity> medications;
+
+  /// R128e (论文3 §5.6 烦恼次数日历): 当天创建的烦恼数
+  final List<WorryThreadEntity> worryThreads;
+
   const DayDetailCard({
     super.key,
     required this.date,
     required this.allCheckIns,
     required this.moodEntries,
     required this.medications,
+    this.worryThreads = const [],
   });
 
   @override
@@ -64,6 +71,11 @@ class DayDetailCard extends StatelessWidget {
     );
     final dateStr =
         '${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}';
+
+    // R128e (论文3 §5.6 烦恼次数日历): 当天创建的烦恼数
+    final worryCount = worryThreads
+        .where((t) => isSameCalendarDay(t.createdAt, date))
+        .length;
 
     return Card(
       child: Padding(
@@ -155,6 +167,24 @@ class DayDetailCard extends StatelessWidget {
                             MoodVisual.emojiFor(detail.bestMoodScore!),
                           ),
                     // v0.27 R77: 直接用 textStyleCaption (textSecondary)
+                    style: AppTokens.textStyleCaption(context),
+                  ),
+                                ],
+              ),
+            ],
+            // R128e (论文3 §5.6 烦恼次数日历): 当天有烦恼记录时显示条数
+            if (worryCount > 0) ...[
+              const SizedBox(height: AppTokens.spacingXs),
+              Row(
+                children: [
+                  Icon(
+                    Icons.self_improvement_outlined,
+                    size: AppTokens.iconSizeSmall,
+                    color: AppColors.fgOnWarning,
+                  ),
+                  const SizedBox(width: AppTokens.spacingXxxs),
+                  Text(
+                    l10n.dayDetailWorryCount(worryCount),
                     style: AppTokens.textStyleCaption(context),
                   ),
                 ],

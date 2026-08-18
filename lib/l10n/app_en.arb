@@ -489,7 +489,10 @@
   "moodTagCalm": "Calm",
   "moodTagInsomnia": "Insomnia",
   "moodTagIrritable": "Irritable",
-  "moodTagLowEnergy": "Low energy",
+    "moodTagLowEnergy": "Low energy",
+  "moodTagSmallJoy": "Small joy",
+  "moodTagGrateful": "Grateful",
+  "moodTagProgress": "Made progress",
   "moodNoteLabel": "Note (optional)",
   "moodNoteHint": "What happened today?",
   "moodStatusPhraseTitle": "Status phrase",
@@ -1253,7 +1256,15 @@
       }
     }
   },
-  "dayDetailTempMed": "Temp dose",
+    "dayDetailTempMed": "Temp dose",
+  "dayDetailWorryCount": "Wrote {count} worry(ies) on that day",
+  "@dayDetailWorryCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "dayDetailPhq9": "PHQ-9 Mood Check",
   "dayDetailGad7": "GAD-7 Mood Check",
   "scaleHotlineCn": "National 24h Psychological Aid Hotline",

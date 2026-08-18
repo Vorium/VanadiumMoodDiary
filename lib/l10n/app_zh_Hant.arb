@@ -531,7 +531,10 @@
   "moodTagCalm": "平靜",
   "moodTagInsomnia": "失眠",
   "moodTagIrritable": "煩躁",
-  "moodTagLowEnergy": "能量低",
+    "moodTagLowEnergy": "能量低",
+  "moodTagSmallJoy": "小確幸",
+  "moodTagGrateful": "感恩",
+  "moodTagProgress": "有進步",
   "moodNoteLabel": "備註（可選）",
   "moodNoteHint": "今天發生什麼？",
   "moodStatusPhraseTitle": "狀態短語",
@@ -1295,7 +1298,15 @@
       }
     }
   },
-  "dayDetailTempMed": "臨時吃藥",
+    "dayDetailTempMed": "臨時吃藥",
+  "dayDetailWorryCount": "那天寫下了 {count} 個煩惱",
+  "@dayDetailWorryCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "dayDetailPhq9": "PHQ-9 情緒自測",
   "dayDetailGad7": "GAD-7 情緒自測",
   "scaleHotlineCn": "全國 24 小時心理援助熱線",

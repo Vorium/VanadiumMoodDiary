@@ -531,7 +531,10 @@
   "moodTagCalm": "平静",
   "moodTagInsomnia": "失眠",
   "moodTagIrritable": "烦躁",
-  "moodTagLowEnergy": "能量低",
+      "moodTagLowEnergy": "能量低",
+  "moodTagSmallJoy": "小确幸",
+  "moodTagGrateful": "感恩",
+  "moodTagProgress": "有进步",
   "moodNoteLabel": "备注（可选）",
   "moodNoteHint": "今天发生什么？",
   "moodStatusPhraseTitle": "状态短语",
@@ -1295,7 +1298,15 @@
       }
     }
   },
-  "dayDetailTempMed": "临时吃药",
+    "dayDetailTempMed": "临时吃药",
+  "dayDetailWorryCount": "那天写下了 {count} 个烦恼",
+  "@dayDetailWorryCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "dayDetailPhq9": "PHQ-9 情绪自测",
   "dayDetailGad7": "GAD-7 情绪自测",
   "scaleHotlineCn": "全国 24 小时心理援助热线",

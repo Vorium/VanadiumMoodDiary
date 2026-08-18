@@ -16,6 +16,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:chroniccare/domain/entities/check_in_entity.dart';
 import 'package:chroniccare/domain/entities/medication_entity.dart';
 import 'package:chroniccare/domain/entities/mood_entry_entity.dart';
+import 'package:chroniccare/domain/entities/worry_thread_entity.dart';
 import 'package:chroniccare/core/shared/mood_visual.dart';
 import 'package:chroniccare/domain/logic/trend_calculator.dart';
 import 'package:chroniccare_theme/chroniccare_theme.dart';
@@ -37,6 +38,10 @@ class CalendarView extends ConsumerStatefulWidget {
   final List<CheckInEntity> allCheckIns;
   final List<MoodEntryEntity> moodEntries;
   final List<MedicationEntity> medications;
+
+  /// R128e (论文3 §5.6 烦恼次数日历): 烦恼时间线 (统计当天创建的烦恼数)
+  final List<WorryThreadEntity> worryThreads;
+
   final VoidCallback onPrevMonth;
   final VoidCallback onNextMonth;
   const CalendarView({
@@ -45,6 +50,7 @@ class CalendarView extends ConsumerStatefulWidget {
     required this.allCheckIns,
     required this.moodEntries,
     required this.medications,
+    this.worryThreads = const [],
     required this.onPrevMonth,
     required this.onNextMonth,
   });
@@ -185,6 +191,8 @@ class _CalendarViewState extends ConsumerState<CalendarView> {
           allCheckIns: widget.allCheckIns,
           moodEntries: widget.moodEntries,
           medications: widget.medications,
+          // R128e (论文3 §5.6 烦恼次数日历): 传烦恼时间线供当天烦恼计数
+          worryThreads: widget.worryThreads,
         ),
       ],
     );

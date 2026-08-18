@@ -1725,6 +1725,24 @@ abstract class AppLocalizations {
   /// **'能量低'**
   String get moodTagLowEnergy;
 
+  /// No description provided for @moodTagSmallJoy.
+  ///
+  /// In zh, this message translates to:
+  /// **'小确幸'**
+  String get moodTagSmallJoy;
+
+  /// No description provided for @moodTagGrateful.
+  ///
+  /// In zh, this message translates to:
+  /// **'感恩'**
+  String get moodTagGrateful;
+
+  /// No description provided for @moodTagProgress.
+  ///
+  /// In zh, this message translates to:
+  /// **'有进步'**
+  String get moodTagProgress;
+
   /// No description provided for @moodNoteLabel.
   ///
   /// In zh, this message translates to:
@@ -3664,6 +3682,12 @@ abstract class AppLocalizations {
   /// In zh, this message translates to:
   /// **'临时吃药'**
   String get dayDetailTempMed;
+
+  /// No description provided for @dayDetailWorryCount.
+  ///
+  /// In zh, this message translates to:
+  /// **'那天写下了 {count} 个烦恼'**
+  String dayDetailWorryCount(int count);
 
   /// No description provided for @dayDetailPhq9.
   ///

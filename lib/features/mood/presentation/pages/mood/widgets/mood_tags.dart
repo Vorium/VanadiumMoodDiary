@@ -31,6 +31,8 @@ class MoodTags extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
+    // R128e (论文3 §5.5 写下开心事): 6 个原有情绪标签 + 3 个正面标签
+    // (小确幸/感恩/有进步), 让用户也能记录开心事, 不只有低落。
     final presetTags = <String>[
       l10n.moodTagAnxiety,
       l10n.moodTagDepression,
@@ -38,6 +40,9 @@ class MoodTags extends StatelessWidget {
       l10n.moodTagInsomnia,
       l10n.moodTagIrritable,
       l10n.moodTagLowEnergy,
+      l10n.moodTagSmallJoy,
+      l10n.moodTagGrateful,
+      l10n.moodTagProgress,
     ];
     return Wrap(
       // v0.27 R72 (emil E-P2-4): 走 AppTokens.spacingXs 集中器替代 inline 8

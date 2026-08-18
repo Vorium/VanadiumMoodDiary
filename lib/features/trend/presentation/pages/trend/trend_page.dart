@@ -16,6 +16,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:chroniccare/domain/entities/check_in_entity.dart';
 import 'package:chroniccare/domain/entities/medication_entity.dart';
 import 'package:chroniccare/domain/entities/mood_entry_entity.dart';
+import 'package:chroniccare/domain/entities/worry_thread_entity.dart';
 import 'package:chroniccare/domain/logic/assessment_record.dart';
 import 'package:chroniccare/domain/logic/trend_calculator.dart';
 import 'package:chroniccare_theme/chroniccare_theme.dart';
@@ -24,6 +25,7 @@ import 'package:go_router/go_router.dart';
 import 'package:chroniccare/presentation/providers/cbt_rerated_entries_provider.dart';
 import 'package:chroniccare/presentation/providers/legal_consent_provider.dart';
 import 'package:chroniccare/presentation/providers/shared_providers.dart';
+import 'package:chroniccare/presentation/providers/worry_providers.dart';
 import 'package:chroniccare/presentation/widgets/animations/page_transition_switcher.dart';
 import 'package:chroniccare/presentation/widgets/empty_state.dart';
 import 'package:chroniccare/presentation/widgets/error_state.dart';
@@ -291,11 +293,17 @@ class _TrendPageState extends ConsumerState<TrendPage> {
           data: (m) => m,
           orElse: () => const <MedicationEntity>[],
         );
+    // R128e (论文3 §5.6 烦恼次数日历): 合并进行中 + 已放下的烦恼, 供日详情卡统计当天烦恼数
+    final worryThreads = <WorryThreadEntity>[
+      ...ref.watch(worryOpenProvider).value ?? const <WorryThreadEntity>[],
+      ...ref.watch(worryResolvedProvider).value ?? const <WorryThreadEntity>[],
+    ];
     return CalendarView(
       calendar: cm,
       allCheckIns: checkIns,
       moodEntries: moodEntries,
       medications: allMedications,
+      worryThreads: worryThreads,
       onPrevMonth: () {
         setState(() {
           _calendarMonth = TrendCalculator.shiftMonth(_calendarMonth, -1);

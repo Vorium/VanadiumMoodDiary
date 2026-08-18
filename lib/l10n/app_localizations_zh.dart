@@ -918,6 +918,15 @@ class AppLocalizationsZh extends AppLocalizations {
   String get moodTagLowEnergy => '能量低';
 
   @override
+  String get moodTagSmallJoy => '小确幸';
+
+  @override
+  String get moodTagGrateful => '感恩';
+
+  @override
+  String get moodTagProgress => '有进步';
+
+  @override
   String get moodNoteLabel => '备注（可选）';
 
   @override
@@ -2010,6 +2019,11 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get dayDetailTempMed => '临时吃药';
+
+  @override
+  String dayDetailWorryCount(int count) {
+    return '那天写下了 $count 个烦恼';
+  }
 
   @override
   String get dayDetailPhq9 => 'PHQ-9 情绪自测';
@@ -5299,6 +5313,15 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get moodTagLowEnergy => '能量低';
 
   @override
+  String get moodTagSmallJoy => '小確幸';
+
+  @override
+  String get moodTagGrateful => '感恩';
+
+  @override
+  String get moodTagProgress => '有進步';
+
+  @override
   String get moodNoteLabel => '備註（可選）';
 
   @override
@@ -6391,6 +6414,11 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
 
   @override
   String get dayDetailTempMed => '臨時吃藥';
+
+  @override
+  String dayDetailWorryCount(int count) {
+    return '那天寫下了 $count 個煩惱';
+  }
 
   @override
   String get dayDetailPhq9 => 'PHQ-9 情緒自測';
