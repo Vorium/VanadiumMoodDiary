@@ -64,15 +64,21 @@
   "@settingsHealthDataMedSub": {
     "description": "v1.1.0 round 11 (R115): 設置-健康數據-用藥副標題",
     "placeholders": {
-      "total": { "type": "int" },
-      "done": { "type": "int" }
+      "total": {
+        "type": "int"
+      },
+      "done": {
+        "type": "int"
+      }
     }
   },
   "settingsHealthDataAssSub": "{count} 個量表",
   "@settingsHealthDataAssSub": {
     "description": "v1.1.0 round 11 (R115): 設置-健康數據-心理評估副標題",
     "placeholders": {
-      "count": { "type": "int" }
+      "count": {
+        "type": "int"
+      }
     }
   },
   "settingsAbout": "關於",
@@ -150,7 +156,6 @@
   "commonClose": "關閉",
   "commonRefresh": "刷新",
   "commonRetry": "重試",
-  "commonGotIt": "我知道了",
   "commonConfirmDelete": "刪除這條？",
   "commonOptionNotSelected": "未選",
   "legalConsentWithdrawn": "已撤回 ({current}/{total})",
@@ -641,8 +646,6 @@
       }
     }
   },
-  "assessmentRecommendUrgent": "強烈建議您儘快聯繫醫生或心理治療師。",
-  "assessmentRecommend": "建議您聯繫醫生做進一步評估。",
   "assessmentDisclaimer": "⚠️ 本評估僅供參考，不能代替專業診斷。\n如感到困擾，請諮詢醫生。",
   "assessmentBack": "返回",
   "assessmentRetake": "再做一次",
@@ -813,29 +816,12 @@
     }
   },
   "assessmentHistoryFullRecord": "完整記錄",
-  "assessmentSeverityNormal": "幾乎沒有",
-  "assessmentSeverityMild": "輕度",
-  "assessmentSeverityModerate": "中度",
-  "assessmentSeverityModeratelySevere": "中重度",
-  "assessmentSeveritySevere": "重度",
-  "assessmentSeverityUnknown": "未知",
   "assessmentScalePhq9": "PHQ-9 情緒自測",
   "assessmentScaleGad7": "GAD-7 情緒自測",
   "setupConsentRequired": "請先完成法律文件閱讀與同意",
   "setupValidationNameRequired": "請輸入您的名字",
   "setupPresetTitle": "📋 選擇預置方案",
   "setupPresetDescription": "預置方案會填好藥名 + 時間，您可以接著改。最終服藥請按醫囑核對。",
-  "setupPresetLoaded": "已載入：{name}（{count} 個藥）請核對藥名和劑量",
-  "@setupPresetLoaded": {
-    "placeholders": {
-      "name": {
-        "type": "Object"
-      },
-      "count": {
-        "type": "int"
-      }
-    }
-  },
   "setupMedWhatDoYouTake": "您常吃什麼藥？",
   "setupMedMultiDrugHint": "（可加多個藥，每個藥配自己的時間和劑量；跳過不影響打卡）",
   "setupMedEmptyHint": "還沒添加藥物。可以跳過——打卡不需要藥物信息。",
@@ -1398,8 +1384,12 @@
   "@homeActionMoodReviewSub": {
     "description": "v1.1.0 round 11 (R115 視覺重構): 情緒回顧快捷操作副標題",
     "placeholders": {
-      "count": { "type": "int" },
-      "avg": { "type": "String" }
+      "count": {
+        "type": "int"
+      },
+      "avg": {
+        "type": "String"
+      }
     }
   },
   "homeActionDailyTrackingSub": "睡眠 / 體重 / 社交節律",
@@ -1411,8 +1401,12 @@
   "@homeMoreMedicationSub": {
     "description": "v1.1.0 round 11 (R115): BottomSheet 用藥管理副標題",
     "placeholders": {
-      "total": { "type": "int" },
-      "done": { "type": "int" }
+      "total": {
+        "type": "int"
+      },
+      "done": {
+        "type": "int"
+      }
     }
   },
   "homeMoreAssessment": "自我測評",
@@ -1420,7 +1414,9 @@
   "@homeMoreAssessmentSub": {
     "description": "v1.1.0 round 11 (R115): BottomSheet 心理評估副標題",
     "placeholders": {
-      "count": { "type": "int" }
+      "count": {
+        "type": "int"
+      }
     }
   },
   "homeMoreCrisis": "危機熱線",
@@ -1430,8 +1426,12 @@
   "@homeMoreWorrySub": {
     "description": "v1.1.0 round 11 (R115): BottomSheet 煩惱閉環副標題",
     "placeholders": {
-      "active": { "type": "int" },
-      "closed": { "type": "int" }
+      "active": {
+        "type": "int"
+      },
+      "closed": {
+        "type": "int"
+      }
     }
   },
   "homeTodayOverview": "今日概覽",
@@ -3290,6 +3290,11 @@
   "worryFieldLabel": "關聯煩惱",
   "worryFieldHint": "選擇或新建一個煩惱，把這次心情記到它的時間線上",
   "worryTimelineEmpty": "這個煩惱還沒有記錄，從「繼續傾訴」開始吧",
+  "worryGuidance1": "試著寫下來：最壞會怎樣？我能接受它嗎？",
+  "worryGuidance2": "3 年後再看這件事，還會一樣在意嗎？",
+  "worryGuidance3": "如果朋友遇到同樣的事，你會對 TA 說什麼？",
+  "worryGuidance4": "現在能做的最小的一步是什麼？",
+  "worryGuidance5": "這件事之外，今天還有什麼是過得去的？",
   "worryArchiveEmpty": "還沒有放下過的煩惱。把心情記成煩惱時間線，成長會被珍藏。",
   "worryArchiveCount": "已放下 {count} 個煩惱",
   "worryOpenCount": "{count} 個進行中",

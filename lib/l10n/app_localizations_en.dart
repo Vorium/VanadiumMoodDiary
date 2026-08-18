@@ -314,9 +314,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get commonRetry => 'Retry';
 
   @override
-  String get commonGotIt => 'Got it';
-
-  @override
   String get commonConfirmDelete => 'Delete this?';
 
   @override
@@ -1113,14 +1110,6 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get assessmentRecommendUrgent =>
-      'Strongly recommend contacting a doctor or therapist as soon as possible.';
-
-  @override
-  String get assessmentRecommend =>
-      'Consider consulting your doctor for further evaluation.';
-
-  @override
   String get assessmentDisclaimer =>
       '⚠️ This assessment is for reference only and cannot replace professional diagnosis.\nIf you feel distressed, please consult a doctor.';
 
@@ -1317,24 +1306,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get assessmentHistoryFullRecord => 'Full Record';
 
   @override
-  String get assessmentSeverityNormal => 'Minimal';
-
-  @override
-  String get assessmentSeverityMild => 'Mild';
-
-  @override
-  String get assessmentSeverityModerate => 'Moderate';
-
-  @override
-  String get assessmentSeverityModeratelySevere => 'Moderately Severe';
-
-  @override
-  String get assessmentSeveritySevere => 'Severe';
-
-  @override
-  String get assessmentSeverityUnknown => 'Unknown';
-
-  @override
   String get assessmentScalePhq9 => 'PHQ-9 Mood Check';
 
   @override
@@ -1353,11 +1324,6 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get setupPresetDescription =>
       'Presets fill in medication names + times. You can modify them. Always follow your doctor\'s instructions.';
-
-  @override
-  String setupPresetLoaded(Object name, int count) {
-    return 'Loaded: $name ($count medications). Please verify names and dosages.';
-  }
 
   @override
   String get setupMedWhatDoYouTake => 'What medications do you take?';
@@ -4560,6 +4526,26 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get worryTimelineEmpty =>
       'This worry has no entries yet. Start with \"Keep writing\".';
+
+  @override
+  String get worryGuidance1 =>
+      'Try writing it down: what\'s the worst that could happen? Can I accept it?';
+
+  @override
+  String get worryGuidance2 =>
+      'Looking back 3 years from now, would it still matter this much?';
+
+  @override
+  String get worryGuidance3 =>
+      'If a friend were going through the same thing, what would you say to them?';
+
+  @override
+  String get worryGuidance4 =>
+      'What\'s the smallest step you can take right now?';
+
+  @override
+  String get worryGuidance5 =>
+      'Besides this worry, what else is going okay today?';
 
   @override
   String get worryArchiveEmpty =>

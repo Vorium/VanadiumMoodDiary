@@ -301,9 +301,6 @@ class AppLocalizationsZh extends AppLocalizations {
   String get commonRetry => '重试';
 
   @override
-  String get commonGotIt => '我知道了';
-
-  @override
   String get commonConfirmDelete => '删除这条？';
 
   @override
@@ -1067,12 +1064,6 @@ class AppLocalizationsZh extends AppLocalizations {
   }
 
   @override
-  String get assessmentRecommendUrgent => '强烈建议您尽快联系医生或心理治疗师。';
-
-  @override
-  String get assessmentRecommend => '建议您联系医生做进一步评估。';
-
-  @override
   String get assessmentDisclaimer => '⚠️ 本评估仅供参考，不能代替专业诊断。\n如感到困扰，请咨询医生。';
 
   @override
@@ -1262,24 +1253,6 @@ class AppLocalizationsZh extends AppLocalizations {
   String get assessmentHistoryFullRecord => '完整记录';
 
   @override
-  String get assessmentSeverityNormal => '几乎没有';
-
-  @override
-  String get assessmentSeverityMild => '轻度';
-
-  @override
-  String get assessmentSeverityModerate => '中度';
-
-  @override
-  String get assessmentSeverityModeratelySevere => '中重度';
-
-  @override
-  String get assessmentSeveritySevere => '重度';
-
-  @override
-  String get assessmentSeverityUnknown => '未知';
-
-  @override
   String get assessmentScalePhq9 => 'PHQ-9 情绪自测';
 
   @override
@@ -1296,11 +1269,6 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get setupPresetDescription => '预置方案会填好药名 + 时间，您可以接著改。最终服药请按医嘱核对。';
-
-  @override
-  String setupPresetLoaded(Object name, int count) {
-    return '已载入：$name（$count 个药）请核对药名和剂量';
-  }
 
   @override
   String get setupMedWhatDoYouTake => '您常吃什么药？';
@@ -4362,6 +4330,21 @@ class AppLocalizationsZh extends AppLocalizations {
   String get worryTimelineEmpty => '这个烦恼还没有记录，从「继续倾诉」开始吧';
 
   @override
+  String get worryGuidance1 => '试着写下来：最坏会怎样？我能接受它吗？';
+
+  @override
+  String get worryGuidance2 => '3 年后再看这件事，还会一样在意吗？';
+
+  @override
+  String get worryGuidance3 => '如果朋友遇到同样的事，你会对 TA 说什么？';
+
+  @override
+  String get worryGuidance4 => '现在能做的最小的一步是什么？';
+
+  @override
+  String get worryGuidance5 => '这件事之外，今天还有什么是过得去的？';
+
+  @override
   String get worryArchiveEmpty => '还没有放下过的烦恼。把心情记成烦恼时间线，成长会被珍藏。';
 
   @override
@@ -4697,9 +4680,6 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
 
   @override
   String get commonRetry => '重試';
-
-  @override
-  String get commonGotIt => '我知道了';
 
   @override
   String get commonConfirmDelete => '刪除這條？';
@@ -5465,12 +5445,6 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   }
 
   @override
-  String get assessmentRecommendUrgent => '強烈建議您儘快聯繫醫生或心理治療師。';
-
-  @override
-  String get assessmentRecommend => '建議您聯繫醫生做進一步評估。';
-
-  @override
   String get assessmentDisclaimer => '⚠️ 本評估僅供參考，不能代替專業診斷。\n如感到困擾，請諮詢醫生。';
 
   @override
@@ -5660,24 +5634,6 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get assessmentHistoryFullRecord => '完整記錄';
 
   @override
-  String get assessmentSeverityNormal => '幾乎沒有';
-
-  @override
-  String get assessmentSeverityMild => '輕度';
-
-  @override
-  String get assessmentSeverityModerate => '中度';
-
-  @override
-  String get assessmentSeverityModeratelySevere => '中重度';
-
-  @override
-  String get assessmentSeveritySevere => '重度';
-
-  @override
-  String get assessmentSeverityUnknown => '未知';
-
-  @override
   String get assessmentScalePhq9 => 'PHQ-9 情緒自測';
 
   @override
@@ -5694,11 +5650,6 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
 
   @override
   String get setupPresetDescription => '預置方案會填好藥名 + 時間，您可以接著改。最終服藥請按醫囑核對。';
-
-  @override
-  String setupPresetLoaded(Object name, int count) {
-    return '已載入：$name（$count 個藥）請核對藥名和劑量';
-  }
 
   @override
   String get setupMedWhatDoYouTake => '您常吃什麼藥？';
@@ -8758,6 +8709,21 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
 
   @override
   String get worryTimelineEmpty => '這個煩惱還沒有記錄，從「繼續傾訴」開始吧';
+
+  @override
+  String get worryGuidance1 => '試著寫下來：最壞會怎樣？我能接受它嗎？';
+
+  @override
+  String get worryGuidance2 => '3 年後再看這件事，還會一樣在意嗎？';
+
+  @override
+  String get worryGuidance3 => '如果朋友遇到同樣的事，你會對 TA 說什麼？';
+
+  @override
+  String get worryGuidance4 => '現在能做的最小的一步是什麼？';
+
+  @override
+  String get worryGuidance5 => '這件事之外，今天還有什麼是過得去的？';
 
   @override
   String get worryArchiveEmpty => '還沒有放下過的煩惱。把心情記成煩惱時間線，成長會被珍藏。';

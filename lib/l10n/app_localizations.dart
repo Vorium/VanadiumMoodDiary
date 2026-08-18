@@ -639,12 +639,6 @@ abstract class AppLocalizations {
   /// **'重试'**
   String get commonRetry;
 
-  /// No description provided for @commonGotIt.
-  ///
-  /// In zh, this message translates to:
-  /// **'我知道了'**
-  String get commonGotIt;
-
   /// No description provided for @commonConfirmDelete.
   ///
   /// In zh, this message translates to:
@@ -1990,18 +1984,6 @@ abstract class AppLocalizations {
   /// **'总分（0-{max}）'**
   String assessmentScoreTotal(int max);
 
-  /// No description provided for @assessmentRecommendUrgent.
-  ///
-  /// In zh, this message translates to:
-  /// **'强烈建议您尽快联系医生或心理治疗师。'**
-  String get assessmentRecommendUrgent;
-
-  /// No description provided for @assessmentRecommend.
-  ///
-  /// In zh, this message translates to:
-  /// **'建议您联系医生做进一步评估。'**
-  String get assessmentRecommend;
-
   /// No description provided for @assessmentDisclaimer.
   ///
   /// In zh, this message translates to:
@@ -2314,42 +2296,6 @@ abstract class AppLocalizations {
   /// **'完整记录'**
   String get assessmentHistoryFullRecord;
 
-  /// No description provided for @assessmentSeverityNormal.
-  ///
-  /// In zh, this message translates to:
-  /// **'几乎没有'**
-  String get assessmentSeverityNormal;
-
-  /// No description provided for @assessmentSeverityMild.
-  ///
-  /// In zh, this message translates to:
-  /// **'轻度'**
-  String get assessmentSeverityMild;
-
-  /// No description provided for @assessmentSeverityModerate.
-  ///
-  /// In zh, this message translates to:
-  /// **'中度'**
-  String get assessmentSeverityModerate;
-
-  /// No description provided for @assessmentSeverityModeratelySevere.
-  ///
-  /// In zh, this message translates to:
-  /// **'中重度'**
-  String get assessmentSeverityModeratelySevere;
-
-  /// No description provided for @assessmentSeveritySevere.
-  ///
-  /// In zh, this message translates to:
-  /// **'重度'**
-  String get assessmentSeveritySevere;
-
-  /// No description provided for @assessmentSeverityUnknown.
-  ///
-  /// In zh, this message translates to:
-  /// **'未知'**
-  String get assessmentSeverityUnknown;
-
   /// No description provided for @assessmentScalePhq9.
   ///
   /// In zh, this message translates to:
@@ -2385,12 +2331,6 @@ abstract class AppLocalizations {
   /// In zh, this message translates to:
   /// **'预置方案会填好药名 + 时间，您可以接著改。最终服药请按医嘱核对。'**
   String get setupPresetDescription;
-
-  /// No description provided for @setupPresetLoaded.
-  ///
-  /// In zh, this message translates to:
-  /// **'已载入：{name}（{count} 个药）请核对药名和剂量'**
-  String setupPresetLoaded(Object name, int count);
 
   /// No description provided for @setupMedWhatDoYouTake.
   ///
@@ -8111,6 +8051,36 @@ abstract class AppLocalizations {
   /// In zh, this message translates to:
   /// **'这个烦恼还没有记录，从「继续倾诉」开始吧'**
   String get worryTimelineEmpty;
+
+  /// No description provided for @worryGuidance1.
+  ///
+  /// In zh, this message translates to:
+  /// **'试着写下来：最坏会怎样？我能接受它吗？'**
+  String get worryGuidance1;
+
+  /// No description provided for @worryGuidance2.
+  ///
+  /// In zh, this message translates to:
+  /// **'3 年后再看这件事，还会一样在意吗？'**
+  String get worryGuidance2;
+
+  /// No description provided for @worryGuidance3.
+  ///
+  /// In zh, this message translates to:
+  /// **'如果朋友遇到同样的事，你会对 TA 说什么？'**
+  String get worryGuidance3;
+
+  /// No description provided for @worryGuidance4.
+  ///
+  /// In zh, this message translates to:
+  /// **'现在能做的最小的一步是什么？'**
+  String get worryGuidance4;
+
+  /// No description provided for @worryGuidance5.
+  ///
+  /// In zh, this message translates to:
+  /// **'这件事之外，今天还有什么是过得去的？'**
+  String get worryGuidance5;
 
   /// No description provided for @worryArchiveEmpty.
   ///

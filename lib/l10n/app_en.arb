@@ -33,15 +33,21 @@
   "@settingsHealthDataMedSub": {
     "description": "v1.1.0 round 11 (R115): settings-health-data-medication subtitle",
     "placeholders": {
-      "total": { "type": "int" },
-      "done": { "type": "int" }
+      "total": {
+        "type": "int"
+      },
+      "done": {
+        "type": "int"
+      }
     }
   },
   "settingsHealthDataAssSub": "{count} scales",
   "@settingsHealthDataAssSub": {
     "description": "v1.1.0 round 11 (R115): settings-health-data-assessment subtitle",
     "placeholders": {
-      "count": { "type": "int" }
+      "count": {
+        "type": "int"
+      }
     }
   },
   "settingsAbout": "About",
@@ -119,7 +125,6 @@
   "commonClose": "Close",
   "commonRefresh": "Refresh",
   "commonRetry": "Retry",
-  "commonGotIt": "Got it",
   "commonConfirmDelete": "Delete this?",
   "commonOptionNotSelected": "Not selected",
   "legalConsentWithdrawn": "Withdrawn ({current}/{total})",
@@ -599,8 +604,6 @@
       }
     }
   },
-  "assessmentRecommendUrgent": "Strongly recommend contacting a doctor or therapist as soon as possible.",
-  "assessmentRecommend": "Consider consulting your doctor for further evaluation.",
   "assessmentDisclaimer": "⚠️ This assessment is for reference only and cannot replace professional diagnosis.\nIf you feel distressed, please consult a doctor.",
   "assessmentBack": "Back",
   "assessmentRetake": "Take Again",
@@ -771,29 +774,12 @@
     }
   },
   "assessmentHistoryFullRecord": "Full Record",
-  "assessmentSeverityNormal": "Minimal",
-  "assessmentSeverityMild": "Mild",
-  "assessmentSeverityModerate": "Moderate",
-  "assessmentSeverityModeratelySevere": "Moderately Severe",
-  "assessmentSeveritySevere": "Severe",
-  "assessmentSeverityUnknown": "Unknown",
   "assessmentScalePhq9": "PHQ-9 Mood Check",
   "assessmentScaleGad7": "GAD-7 Mood Check",
   "setupConsentRequired": "Please read and agree to the legal documents first",
   "setupValidationNameRequired": "Please enter your name",
   "setupPresetTitle": "📋 Choose a Preset",
   "setupPresetDescription": "Presets fill in medication names + times. You can modify them. Always follow your doctor's instructions.",
-  "setupPresetLoaded": "Loaded: {name} ({count} medications). Please verify names and dosages.",
-  "@setupPresetLoaded": {
-    "placeholders": {
-      "name": {
-        "type": "Object"
-      },
-      "count": {
-        "type": "int"
-      }
-    }
-  },
   "setupMedWhatDoYouTake": "What medications do you take?",
   "setupMedMultiDrugHint": "(Add multiple medications, each with its own time and dosage; skipping won't affect check-in)",
   "setupMedEmptyHint": "No medications added yet. You can skip — check-in doesn't require medication info.",
@@ -1356,8 +1342,12 @@
   "@homeActionMoodReviewSub": {
     "description": "v1.1.0 round 11 (R115 visual refactor): mood review quick action subtitle",
     "placeholders": {
-      "count": { "type": "int" },
-      "avg": { "type": "String" }
+      "count": {
+        "type": "int"
+      },
+      "avg": {
+        "type": "String"
+      }
     }
   },
   "homeActionDailyTrackingSub": "Sleep · Weight · Social rhythm",
@@ -1369,8 +1359,12 @@
   "@homeMoreMedicationSub": {
     "description": "v1.1.0 round 11 (R115): BottomSheet medication subtitle",
     "placeholders": {
-      "total": { "type": "int" },
-      "done": { "type": "int" }
+      "total": {
+        "type": "int"
+      },
+      "done": {
+        "type": "int"
+      }
     }
   },
   "homeMoreAssessment": "Self Check-ins",
@@ -1378,7 +1372,9 @@
   "@homeMoreAssessmentSub": {
     "description": "v1.1.0 round 11 (R115): BottomSheet assessment subtitle",
     "placeholders": {
-      "count": { "type": "int" }
+      "count": {
+        "type": "int"
+      }
     }
   },
   "homeMoreCrisis": "Crisis hotline",
@@ -1388,8 +1384,12 @@
   "@homeMoreWorrySub": {
     "description": "v1.1.0 round 11 (R115): BottomSheet worry subtitle",
     "placeholders": {
-      "active": { "type": "int" },
-      "closed": { "type": "int" }
+      "active": {
+        "type": "int"
+      },
+      "closed": {
+        "type": "int"
+      }
     }
   },
   "homeTodayOverview": "Today",
@@ -3197,6 +3197,11 @@
   "worryFieldLabel": "Linked worry",
   "worryFieldHint": "Choose or create a worry to add this mood to its timeline",
   "worryTimelineEmpty": "This worry has no entries yet. Start with \"Keep writing\".",
+  "worryGuidance1": "Try writing it down: what's the worst that could happen? Can I accept it?",
+  "worryGuidance2": "Looking back 3 years from now, would it still matter this much?",
+  "worryGuidance3": "If a friend were going through the same thing, what would you say to them?",
+  "worryGuidance4": "What's the smallest step you can take right now?",
+  "worryGuidance5": "Besides this worry, what else is going okay today?",
   "worryArchiveEmpty": "No worries let go yet. Turning moods into worry timelines makes growth last.",
   "worryArchiveCount": "{count} worries let go",
   "worryOpenCount": "{count} in progress",

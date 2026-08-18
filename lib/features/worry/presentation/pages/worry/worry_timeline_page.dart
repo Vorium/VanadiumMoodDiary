@@ -18,10 +18,13 @@ import 'package:chroniccare/core/shared/mood_visual.dart';
 import 'package:chroniccare_theme/chroniccare_theme.dart';
 import 'package:chroniccare/domain/entities/mood_entry_entity.dart';
 import 'package:chroniccare/domain/entities/worry_thread_entity.dart';
+import 'package:chroniccare/domain/logic/worry_guidance.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
+import 'package:chroniccare/l10n/preset_content_l10n.dart';
 import 'package:chroniccare/presentation/providers/core_providers.dart';
 import 'package:chroniccare/presentation/providers/worry_providers.dart';
 import 'package:chroniccare/presentation/widgets/apple_list_section.dart';
+import 'package:chroniccare/presentation/widgets/info_banner.dart';
 import 'package:chroniccare/presentation/widgets/page_scaffold.dart';
 import 'package:chroniccare/presentation/widgets/press_feedback.dart';
 import 'package:chroniccare/presentation/widgets/press_feedback_icon_button.dart';
@@ -74,6 +77,7 @@ class _WorryTimelinePageState extends ConsumerState<WorryTimelinePage> {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           _header(l10n, thread),
+          if (!thread.isResolved) _guidanceBanner(l10n, thread),
           _actions(l10n, thread),
           Expanded(
             child: entries.when(
@@ -114,6 +118,27 @@ class _WorryTimelinePageState extends ConsumerState<WorryTimelinePage> {
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  /// R128e (论文3 §5.3 引导化解决烦恼 / 图9): open 状态时在 header 下方
+  /// 显示一句认知重构引导, 帮用户打开思路而非只被动记录。
+  /// 同一烦恼每次打开显示同一句 (按 createdAt 稳定轮换), 不闪烁。
+  Widget _guidanceBanner(AppLocalizations l10n, WorryThreadEntity thread) {
+    final index = WorryGuidance.guidanceIndexFor(thread.createdAt);
+    final guidance = localizedWorryGuidance(context, index);
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(
+        AppTokens.pageMarginH,
+        0,
+        AppTokens.pageMarginH,
+        AppTokens.spacingXs,
+      ),
+      child: InfoBanner(
+        icon: Icons.self_improvement_outlined,
+        text: guidance,
+        tone: InfoBannerTone.muted,
       ),
     );
   }

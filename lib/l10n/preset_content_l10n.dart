@@ -74,6 +74,20 @@ String localizedEncouragement(
   };
 }
 
+/// 烦恼引导提示本地化 — 索引 (1..5) → ARB key
+///
+/// R128e (论文3 §5.3): 帮用户打开思路的认知重构引导。
+String localizedWorryGuidance(BuildContext context, int index) {
+  final l10n = AppLocalizations.of(context);
+  return switch (index) {
+    1 => l10n.worryGuidance1,
+    2 => l10n.worryGuidance2,
+    3 => l10n.worryGuidance3,
+    4 => l10n.worryGuidance4,
+    _ => l10n.worryGuidance5,
+  };
+}
+
 /// 心理技巧本地化结果 (title / summary / steps 全部按 locale 走 ARB)
 class LocalizedPsychologyTip {
   const LocalizedPsychologyTip({
